@@ -58,7 +58,7 @@ end
 
 (** {2 a QBF literal} *)
 module Lit : sig
-  type t = private int
+  type t = int
   (** A boolean literal is only a non-zero integer *)
 
   val make : int -> t
@@ -68,7 +68,7 @@ module Lit : sig
   val neg : t -> t
   (** Negation (i.e. opposite) *)
 
-  val atom : t -> int
+  val to_int : t -> int
   (** The underlying atom, or name (strictly positive integer) *)
 
   val equal : t -> t -> bool
@@ -103,6 +103,7 @@ module Formula : sig
     | Or of t list
     | True
     | False
+    | Not of t
     | Atom of Lit.t
 
   val forall : Lit.t list -> t -> t
@@ -120,11 +121,22 @@ module Formula : sig
   val hash : t -> int
   val print : Format.formatter -> t -> unit
 
+  val simplify : t -> t
+  (** Simplifications *)
+
   val cnf : t list -> CNF.t
   (** Convert the formula into a prenex-clausal normal form. This can use
       some Tseitin conversion, introducing new literals, to avoid the
       exponential blowup t hat can sometimes occur *)
 end
+
+(** {2 Main solving function}
+
+{[
+  let cnf = Quantor.CNF.exists [1; 2] (Quantor.CNF.cnf [[1; ~-2]; [2; ~-3]]);;
+  Quantor.solve cnf;;
+]}
+*)
 
 val solve : CNF.t -> result
 (** Check whether the CNF formula is true (satisfiable) or false *)
