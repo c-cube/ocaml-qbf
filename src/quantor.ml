@@ -71,7 +71,7 @@ module Raw = struct
       | 20 -> Unsat
       | 30 -> Timeout
       | 40 -> Spaceout
-      | _ -> failwith (Printf.sprintf "unknown quantor result: %d" i)
+      | _ -> failwith ("unknown quantor result: " ^string_of_int i)
 
   let scope (Quantor q) quant = match quant with
     | Forall -> quantor_scope_forall q

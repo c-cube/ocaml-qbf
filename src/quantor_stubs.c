@@ -84,7 +84,7 @@ CAMLprim value quantor_stub_forall(value raw)
   CAMLreturn (Val_unit);
 }
 
-CAMLprim value quantor_stub_add(value raw, int i)
+CAMLprim value quantor_stub_add(value raw, value i)
 {
   CAMLparam0();
   Quantor* q = (Quantor*) raw;

@@ -10,12 +10,14 @@ BuildTools:  ocamlbuild
 
 Synopsis:    Bindings to the Quantor QBF-solver
 
+PostConfCommand:    make deps
+
 Library "quantor"
   Path:             src
   Modules:          Quantor
-  CSources:         quantor_stubs.c, quantor_stubs.h
-  CCLib:            -L./libs/quantor-3.0/ -lquantor 
-  CCOpt:            -O2 -Wextra -Wno-unused-parameter -fPIC -I./libs/quantor-3.0/
+  CSources:         quantor_stubs.c, quantor_stubs.h, quantor.h
+  CCLib:            -L../libs/quantor-3.0/ -lquantor 
+  CCOpt:            -O2 -Wextra -Wno-unused-parameter
 
 SourceRepository head
   Type: git
