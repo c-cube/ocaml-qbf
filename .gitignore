@@ -3,7 +3,6 @@ _build
 *.native
 *.docdir
 *.html
-man/
-sequence.install
 setup.log
 setup.data
+*.o
