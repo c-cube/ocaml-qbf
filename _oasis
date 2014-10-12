@@ -1,0 +1,23 @@
+OASISFormat: 0.4
+Name:        ocaml-quantor
+Version:     0.0.1
+Homepage:    https://github.com/c-cube/ocaml-quantor
+Authors:     Simon Cruanes
+License:     BSD-3-clause
+LicenseFile: LICENSE
+Plugins:     META (0.3), DevFiles (0.3)
+BuildTools:  ocamlbuild
+
+Synopsis:    Bindings to the Quantor QBF-solver
+
+Library "quantor"
+  Path:             src
+  Modules:          Quantor
+  CSources:         quantor_stubs.c, quantor_stubs.h
+  CCLib:            -L./libs/quantor-3.0/ -lquantor 
+  CCOpt:            -O2 -Wextra -Wno-unused-parameter -fPIC -I./libs/quantor-3.0/
+
+SourceRepository head
+  Type: git
+  Location: https://github.com/c-cube/quantor
+  Browser: https://github.com/c-cube/quantor/tree/master/src

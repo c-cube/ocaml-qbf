@@ -1,0 +1,8 @@
+
+#directory "_build/src";;
+#load "quantor.cma";;
+
+let pp_quantor fmt q = Format.pp_print_string fmt "<quantor>";;  (* TODO: use id *)
+#install_printer pp_quantor;;
+
+print_endline "loaded Quantor";;
