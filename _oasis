@@ -8,9 +8,6 @@ LicenseFile: LICENSE
 Plugins:     META (0.3), DevFiles (0.3)
 BuildTools:  ocamlbuild
 
-AlphaFeatures: ocamlbuild_more_args
-XOCamlbuildExtraArgs: "-classic-display -cflags -ccopt,'-I../libs/quantor-3.0' -lflags -cclib,'-L../libs/quantor-3.0'"
-
 Synopsis:    Bindings to the Quantor QBF-solver
 
 PostConfCommand:    make deps
@@ -19,9 +16,8 @@ Library "quantor"
   Path:             src
   Modules:          Quantor
   CSources:         quantor_stubs.c, quantor_stubs.h
-  CCOpt:            -O2 -Wextra -Wno-unused-parameter -I ../../libs/quantor-3.0/
-  CCLib:            -L ../../libs/quantor-3.0/ -lquantor 
-  BuildDepends:     quantor
+  CCOpt:            -O2 -Wextra -Wno-unused-parameter -I../libs/quantor-3.0/
+  CCLib:            -L../libs/quantor-3.0/ -lquantor 
 
 SourceRepository head
   Type: git
