@@ -80,3 +80,122 @@ module Raw = struct
   let add (Quantor q) i = quantor_add q i
     
 end
+
+(** {2 a QBF literal} *)
+module Lit = struct
+  type t = int
+  (** A boolean literal is only a non-zero integer *)
+
+  let make i =
+    if i=0 then raise (Invalid_argument "Lit.make");
+    i
+
+  let neg i = ~- i
+  let atom i = i
+
+  let equal (i:int) j = i=j
+  let compare (i:int) j = Pervasives.compare i j
+  let hash i = i land max_int
+  let print fmt i = Format.fprintf fmt "L%i" i
+end
+
+(** {2 A QBF Formula in CNF} *)
+module CNF = struct
+  type clause = Lit.t list
+
+  type t =
+    | Quant of quantifier * Lit.t list * t
+    | CNF of clause list
+
+  let forall lits f = match lits, f with
+    | [], _ -> f
+    | _, Quant (Forall, lits', f') ->
+        Quant (Forall, List.rev_append lits lits', f')
+    | _ -> Quant (Forall, lits, f)
+
+  let exists lits f = match lits, f with
+    | [], _ -> f
+    | _, Quant (Exists, lits', f') ->
+        Quant (Exists, List.rev_append lits lits', f')
+    | _ -> Quant (Exists, lits, f)
+
+  let cnf c = CNF c
+
+  let equal = (=)
+  let compare = Pervasives.compare
+  let hash = Hashtbl.hash
+
+  let print fmt f = failwith "CNF.print: not implemented" (* TODO *)
+end
+
+(** {2 a QBF formula} *)
+module Formula = struct
+  type t =
+    | Quant of quantifier * Lit.t list * t
+    | And of t list
+    | Or of t list
+    | True
+    | False
+    | Atom of Lit.t
+
+  let true_ = True
+  let false_ = False
+  let atom l = Atom l
+
+  let rec neg = function
+    | Quant (Forall, lits, f) -> Quant (Exists, lits, neg f)
+    | Quant (Exists, lits, f) -> Quant (Forall, lits, neg f)
+    | Atom l -> Atom (Lit.neg l)
+    | And l -> Or (List.map neg l)
+    | Or l -> And (List.map neg l)
+    | True -> False
+    | False -> True
+
+  let forall lits f = match lits, f with
+    | [], _ -> f
+    | _, Quant (Forall, lits', f') ->
+        Quant (Forall, List.rev_append lits lits', f')
+    | _ -> Quant (Forall, lits, f)
+
+  let exists lits f = match lits, f with
+    | [], _ -> f
+    | _, Quant (Exists, lits', f') ->
+        Quant (Exists, List.rev_append lits lits', f')
+    | _ -> Quant (Exists, lits, f)
+
+  let and_l = function
+    | [] -> True
+    | [x] -> x
+    | l -> And l
+
+  let or_l = function
+    | [] -> False
+    | [x] -> x
+    | l -> Or l
+
+  let equal = (=)
+  let compare = Pervasives.compare
+  let hash = Hashtbl.hash
+
+  let print fmt f = failwith "Formula.print: not implemented" (* TODO *)
+
+  let cnf f = failwith "Formula.CNF: not implemented" (* TODO *)
+end
+
+let rec _add_cnf solver cnf = match cnf with
+  | CNF.Quant (quant, lits, cnf') ->
+      Raw.scope solver quant;
+      List.iter (fun lit -> Raw.add solver lit) lits;
+      Raw.add solver 0;
+      _add_cnf solver cnf'
+  | CNF.CNF clauses ->
+      List.iter
+        (fun c ->
+          List.iter (fun lit -> Raw.add solver lit) c;
+          Raw.add solver 0;
+        ) clauses
+
+let solve cnf =
+  let solver = Raw.create () in
+  _add_cnf solver cnf;
+  Raw.sat solver
