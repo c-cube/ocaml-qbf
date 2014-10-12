@@ -1,0 +1,30 @@
+CC=@CC@
+CFLAGS=@CFLAGS@
+
+all: picosat libpicosat.a
+
+clean:
+	rm -f picosat *.s *.o *.a 
+	rm -f makefile config.h
+	rm -f gmon.out *~ 
+
+picosat: picosat.o app.o main.o
+	$(CC) $(CFLAGS) -o $@ main.o app.o picosat.o
+
+app.o: app.c picosat.h makefile
+	$(CC) $(CFLAGS) -c $<
+
+main.o: main.c picosat.h makefile
+	$(CC) $(CFLAGS) -c $<
+
+picosat.o: picosat.c picosat.h config.h makefile
+	$(CC) $(CFLAGS) -c $<
+
+config.h: makefile mkconfig # and actually picosat.c
+	rm -f $@; ./mkconfig > $@
+
+libpicosat.a: picosat.o
+	ar rc $@ picosat.o
+	ranlib $@
+
+.PHONY: all clean
