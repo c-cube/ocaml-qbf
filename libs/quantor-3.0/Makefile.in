@@ -12,7 +12,7 @@ quantor: main.o libquantor.a $(DEPLIB)
 quantor.o: quantor.c options.c quantor.h config.h $(DEPHEADERS)
 	$(CC) $(CFLAGS) $(INC) -c quantor.c
 libquantor.a: quantor.o
-	$(AR) rc $@ quantor.o
+	$(AR) rc $@ ../picosat-535/picosat.o quantor.o
 	$(RANLIB) $@
 options.c: genopts options.sh
 	rm -f $@; ./genopts < options.sh > $@
