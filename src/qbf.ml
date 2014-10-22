@@ -26,9 +26,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (** {1 Bindings to Quantor} *)
 
-type quantor
-(** Abstract type of Quantor solver *)
-
 type result =
   | Unknown
   | Sat
@@ -39,47 +36,6 @@ type result =
 type quantifier =
   | Forall
   | Exists
-
-external quantor_create : unit -> quantor = "quantor_stub_create"
-
-external quantor_delete : quantor -> unit = "quantor_stub_delete"
-
-external quantor_sat : quantor -> int = "quantor_stub_sat"
-
-external quantor_scope_exists : quantor -> unit = "quantor_stub_exists"
-
-external quantor_scope_forall : quantor -> unit = "quantor_stub_forall"
-
-external quantor_add : quantor -> int -> unit = "quantor_stub_add"
-
-(** {2 Direct Bindings} *)
-
-module Raw = struct
-  type t = Quantor of quantor
-
-  let create () =
-    let _q = quantor_create () in
-    let q = Quantor _q in
-    Gc.finalise (fun _ -> quantor_delete _q) q;
-    q
-
-  let sat (Quantor q) =
-    let i = quantor_sat q in
-    match i with
-      | 0 -> Unknown
-      | 10 -> Sat
-      | 20 -> Unsat
-      | 30 -> Timeout
-      | 40 -> Spaceout
-      | _ -> failwith ("unknown quantor result: " ^string_of_int i)
-
-  let scope (Quantor q) quant = match quant with
-    | Forall -> quantor_scope_forall q
-    | Exists -> quantor_scope_exists q
-
-  let add (Quantor q) i = quantor_add q i
-    
-end
 
 (** {2 a QBF literal} *)
 module Lit = struct
@@ -229,23 +185,17 @@ module Formula = struct
     | True -> False
     | False -> True
 
-  let cnf f = failwith "Formula.CNF: not implemented" (* TODO *)
+  let cnf f =
+    (* TODO: traverse quantifiers to compute maxvar (maxvar+1 = start of gensym)
+       TODO: compute CNF with gensyms, accumulating list of new vars to existentially quantified
+       TODO: use Tseiting agressively, without re-using names *)
+    failwith "Formula.CNF: not implemented"
 end
 
-let rec _add_cnf solver cnf = match cnf with
-  | CNF.Quant (quant, lits, cnf') ->
-      Raw.scope solver quant;
-      List.iter (fun lit -> Raw.add solver lit) lits;
-      Raw.add solver 0;
-      _add_cnf solver cnf'
-  | CNF.CNF clauses ->
-      List.iter
-        (fun c ->
-          List.iter (fun lit -> Raw.add solver lit) c;
-          Raw.add solver 0;
-        ) clauses
+type solver = {
+  name : string;
+  solve : CNF.t -> result;
+}
 
-let solve cnf =
-  let solver = Raw.create () in
-  _add_cnf solver cnf;
-  Raw.sat solver
+let solve ~solver cnf =
+  solver.solve cnf

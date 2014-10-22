@@ -37,25 +37,6 @@ type quantifier =
   | Forall
   | Exists
 
-(** {2 Direct Bindings} *)
-
-module Raw : sig
-  type t
-  (** Encapsulated solver *)
-
-  val create : unit -> t
-  (** Allocate a new QBF solver *)
-
-  val sat : t -> result
-  (** Current status of the solver *)
-
-  val scope : t -> quantifier -> unit
-  (** Open a new scope with the given kind of quantifier *)
-
-  val add : t -> int -> unit
-  (** Add a literal, or end the current clause/scope with [0] *)
-end
-
 (** {2 a QBF literal} *)
 module Lit : sig
   type t = int
@@ -127,16 +108,16 @@ module Formula : sig
   val cnf : t list -> CNF.t
   (** Convert the formula into a prenex-clausal normal form. This can use
       some Tseitin conversion, introducing new literals, to avoid the
-      exponential blowup t hat can sometimes occur *)
+      exponential blowup that can sometimes occur *)
 end
 
-(** {2 Main solving function}
+(** {2 Solvers} *)
 
-{[
-  let cnf = Quantor.CNF.exists [1; 2] (Quantor.CNF.cnf [[1; ~-2]; [2; ~-3]]);;
-  Quantor.solve cnf;;
-]}
-*)
+type solver = {
+  name : string;
+  solve : CNF.t -> result;
+}
 
-val solve : CNF.t -> result
-(** Check whether the CNF formula is true (satisfiable) or false *)
+val solve : solver:solver -> CNF.t -> result
+(** Check whether the CNF formula is true (satisfiable) or false
+    using the given solver *)

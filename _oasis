@@ -1,23 +1,54 @@
 OASISFormat: 0.4
-Name:        ocaml-quantor
+Name:        ocaml-qbf
 Version:     0.0.1
-Homepage:    https://github.com/c-cube/ocaml-quantor
+Homepage:    https://github.com/c-cube/ocaml-qbf
 Authors:     Simon Cruanes
 License:     BSD-3-clause
 LicenseFile: LICENSE
 Plugins:     META (0.3), DevFiles (0.3)
 BuildTools:  ocamlbuild
 
-Synopsis:    Bindings to the Quantor QBF-solver
+Synopsis:   QBF solving in OCaml, including bindings
 
 PostConfCommand:    make deps
 
-Library "quantor"
+Flag "quantor"
+  Description:      build and install the binding "qbf.quantor"
+  Default:          true
+
+Library "qbf"
   Path:             src
+  Modules:          Qbf
+
+Library "qbf-quantor"
+  Path:             src/quantor/
   Modules:          Quantor
   CSources:         quantor_stubs.c, quantor_stubs.h
   CCOpt:            -O2 -Wextra -Wno-unused-parameter -I../libs/quantor-3.0/
-  CCLib:            -L../libs/quantor-3.0/ -lquantor 
+  CCLib:            -L../libs/quantor-3.0/ -lquantor
+  FindlibName:      quantor
+  FindlibParent:    qbf
+  Build$:           flag(quantor)
+  Install$:         flag(quantor)
+  BuildDepends:     qbf
+
+Document qbf
+  Title:                Qbf docs
+  Type:                 ocamlbuild (0.3)
+  BuildTools+:          ocamldoc
+  Install:              true
+  XOCamlbuildPath:      .
+  XOCamlbuildLibraries: qbf
+
+Document "qbf-quantor"
+  Title:                Qbf bindings to Quantor documentation
+  Type:                 ocamlbuild (0.3)
+  BuildTools+:          ocamldoc
+  Install:              true
+  XOCamlbuildPath:      .
+  XOCamlbuildLibraries: qbf.quantor
+  Build$:               flag(quantor)
+  Install$:             flag(quantor)
 
 SourceRepository head
   Type: git

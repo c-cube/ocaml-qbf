@@ -1,9 +1,12 @@
 
 #directory "_build/src";;
-#load "quantor.cma";;
+#load "qbf.cma";;
 
-#install_printer Quantor.Lit.print;;
-#install_printer Quantor.CNF.print;;
-#install_printer Quantor.Formula.print;;
+#install_printer Qbf.Lit.print;;
+#install_printer Qbf.CNF.print;;
+#install_printer Qbf.Formula.print;;
 
-print_endline "loaded Quantor";;
+print_endline "loaded Qbf";;
+
+#directory "_build/src/quantor/";;
+#load "qbf-quantor.cma";;
