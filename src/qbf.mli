@@ -66,8 +66,9 @@ module CNF : sig
     | Quant of quantifier * Lit.t list * t
     | CNF of clause list
 
-  val forall : Lit.t list -> t -> t 
+  val forall : Lit.t list -> t -> t
   val exists : Lit.t list -> t -> t
+  val quantify : quantifier -> Lit.t list -> t -> t
   val cnf : clause list -> t
 
   val equal : t -> t -> bool
@@ -76,26 +77,39 @@ module CNF : sig
   val print : Format.formatter -> t -> unit
 end
 
-(** {2 a QBF formula} *)
+(** {2 a QBF formula}
+
+The formula must already be prenex, i.e. it should be nested quantifiers
+with a quantifier-free formula inside. *)
 module Formula : sig
   type t = private
     | Quant of quantifier * Lit.t list * t
-    | And of t list
-    | Or of t list
+    | Form of form
+  and form = private
+    | And of form list
+    | Or of form list
+    | Imply of form * form
+    | XOr of form list  (* exactly one element in the list is true *)
+    | Equiv of form list (* all the elements are true, or all of them are false *)
     | True
     | False
-    | Not of t
+    | Not of form
     | Atom of Lit.t
 
   val forall : Lit.t list -> t -> t
   val exists : Lit.t list -> t -> t
+  val quantify : quantifier -> Lit.t list -> t -> t
+  val form : form -> t
 
-  val true_ : t
-  val false_ : t
-  val and_l : t list-> t
-  val or_l : t list -> t
-  val atom : Lit.t -> t
-  val neg : t -> t
+  val true_ : form
+  val false_ : form
+  val and_l : form list-> form
+  val or_l : form list -> form
+  val xor_l : form list -> form
+  val equiv_l : form list -> form
+  val imply : form -> form -> form
+  val atom : Lit.t -> form
+  val neg : form -> form
 
   val equal : t -> t -> bool
   val compare : t -> t -> int
@@ -105,7 +119,7 @@ module Formula : sig
   val simplify : t -> t
   (** Simplifications *)
 
-  val cnf : t list -> CNF.t
+  val cnf : t -> CNF.t
   (** Convert the formula into a prenex-clausal normal form. This can use
       some Tseitin conversion, introducing new literals, to avoid the
       exponential blowup that can sometimes occur *)
