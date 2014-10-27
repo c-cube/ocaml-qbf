@@ -295,8 +295,9 @@ module Formula = struct
       | Or l, Minus ->
           List.fold_left (fun acc f' -> cnf_f ~ctx ~pol acc f' ) acc l
       | And (a::l), Minus ->
+          let a' = cnf_f ~ctx ~pol [] a in
           let l' = List.map (cnf_f ~ctx ~pol []) l in
-          cnf_list ~ctx acc [] l'
+          cnf_list ~ctx acc a' l'
       | Or (a::l), Plus ->
           (* CNF of each sub-formula *)
           let a' = cnf_f ~ctx ~pol [] a in
