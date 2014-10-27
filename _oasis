@@ -10,27 +10,40 @@ BuildTools:  ocamlbuild
 
 Synopsis:   QBF solving in OCaml, including bindings
 
-PostConfCommand:    make deps
+PostConfCommand:        make deps
 
 Flag "quantor"
-  Description:      build and install the binding "qbf.quantor"
-  Default:          true
+  Description:          build and install the binding "qbf.quantor"
+  Default:              true
+
+Flag "random"
+  Description:          build and install random generators (depends on "random-generator")
+  Default:              false
 
 Library "qbf"
-  Path:             src
-  Modules:          Qbf
+  Path:                 src
+  Modules:              Qbf
 
 Library "qbf-quantor"
-  Path:             src/quantor/
-  Modules:          Quantor
-  CSources:         quantor_stubs.c, quantor_stubs.h
-  CCOpt:            -O2 -Wextra -Wno-unused-parameter -I../libs/quantor-3.0/
-  CCLib:            -L../libs/quantor-3.0/ -lquantor
-  FindlibName:      quantor
-  FindlibParent:    qbf
-  Build$:           flag(quantor)
-  Install$:         flag(quantor)
-  BuildDepends:     qbf
+  Path:                 src/quantor/
+  Modules:              Quantor
+  CSources:             quantor_stubs.c, quantor_stubs.h
+  CCOpt:                -O2 -Wextra -Wno-unused-parameter -I../libs/quantor-3.0/
+  CCLib:                -L../libs/quantor-3.0/ -lquantor
+  FindlibName:          quantor
+  FindlibParent:        qbf
+  Build$:               flag(quantor)
+  Install$:             flag(quantor)
+  BuildDepends:         qbf
+
+Library "qbf-random"
+  Path:                 src/random/
+  Modules:              QbfRandom
+  FindlibName:          random
+  FindlibParent:        qbf
+  Build$:               flag(random)
+  Install$:             flag(random)
+  BuildDepends:         qbf, random-generator
 
 Document qbf
   Title:                Qbf docs

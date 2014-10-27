@@ -1,4 +1,6 @@
 S src
 S src/quantor
+S src/random/
 B _build/src/
 B _build/src/quantor
+B _build/src/random
