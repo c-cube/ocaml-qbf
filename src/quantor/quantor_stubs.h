@@ -32,3 +32,4 @@ CAMLprim value quantor_stub_sat(value q);
 CAMLprim value quantor_stub_exists(value q);
 CAMLprim value quantor_stub_forall(value q);
 CAMLprim value quantor_stub_add(value q, value i);
+CAMLprim value quantor_stub_deref(value q, value i);
