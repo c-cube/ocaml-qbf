@@ -26,12 +26,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (** {1 Bindings to Quantor} *)
 
-type result =
-  | Unknown
-  | Sat
-  | Unsat
-  | Timeout
-  | Spaceout
+type assignment =
+  | True
+  | False
+  | Undef
 
 type quantifier =
   | Forall
@@ -361,6 +359,15 @@ module Formula = struct
 
   let cnf f = CnfAlgo.traverse ~ctx:(CnfAlgo.mk_ctx()) f
 end
+
+(** {2 Solvers} *)
+
+type result =
+  | Unknown
+  | Sat of (Lit.t -> assignment)
+  | Unsat
+  | Timeout
+  | Spaceout
 
 type solver = {
   name : string;

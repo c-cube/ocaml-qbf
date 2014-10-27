@@ -41,6 +41,8 @@ external quantor_scope_forall : quantor -> unit = "quantor_stub_forall"
 
 external quantor_add : quantor -> int -> unit = "quantor_stub_add"
 
+external quantor_deref : quantor -> int -> int = "quantor_stub_deref"
+
 (** {2 Direct Bindings} *)
 
 module Raw = struct
@@ -55,11 +57,18 @@ module Raw = struct
     Gc.finalise (fun _ -> quantor_delete _q) q;
     q
 
-  let sat (Quantor q) =
+  let deref (Quantor q) i =
+    match quantor_deref q i with
+    | 0 -> Qbf.False
+    | 1 -> Qbf.True
+    | -1 -> Qbf.Undef
+    | n -> failwith ("unknown quantor_deref result: " ^ string_of_int n)
+
+  let sat ((Quantor q) as solver) =
     let i = quantor_sat q in
     match i with
       | 0 -> Qbf.Unknown
-      | 10 -> Qbf.Sat
+      | 10 -> Qbf.Sat (fun i -> deref solver (Qbf.Lit.to_int i))
       | 20 -> Qbf.Unsat
       | 30 -> Qbf.Timeout
       | 40 -> Qbf.Spaceout

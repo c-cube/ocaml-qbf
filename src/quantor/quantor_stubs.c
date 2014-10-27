@@ -99,3 +99,13 @@ CAMLprim value quantor_stub_add(value raw, value i)
   CAMLreturn (Val_unit);
 }
 
+CAMLprim value quantor_stub_deref(value raw, value i)
+{
+  CAMLparam0();
+  Quantor* q = (Quantor*) raw;
+  int j = Int_val(i);
+
+  int res = quantor_deref(q, j);
+
+  CAMLreturn (Val_int(res));
+}

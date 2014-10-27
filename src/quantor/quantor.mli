@@ -43,6 +43,9 @@ module Raw : sig
 
   val add : t -> int -> unit
   (** Add a literal, or end the current clause/scope with [0] *)
+
+  val deref : t -> int -> Qbf.assignment
+  (** Obtain the value of this literal in the current model *)
 end
 
 (** {2 Solver}
