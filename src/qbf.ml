@@ -35,6 +35,8 @@ type quantifier =
   | Forall
   | Exists
 
+type 'a printer = Format.formatter -> 'a -> unit
+
 (** {2 a QBF literal} *)
 module Lit = struct
   type t = int
@@ -95,16 +97,20 @@ module CNF = struct
   let compare = Pervasives.compare
   let hash = Hashtbl.hash
 
-  let _print_clause fmt c =
-    Format.fprintf fmt "@[<h>(%a)@]" (print_l ~sep:" ∨ " Lit.print) c
-  let _print_clauses fmt l =
-    Format.fprintf fmt "@[<hov>%a@]" (print_l ~sep:", " _print_clause) l
+  let _print_clause ~pp_lit fmt c =
+    Format.fprintf fmt "@[<hov 2>(%a)@]" (print_l ~sep:" ∨ " pp_lit) c
+  let _print_clauses ~pp_lit fmt l =
+    Format.fprintf fmt "@[<hov>%a@]" (print_l ~sep:", " (_print_clause ~pp_lit)) l
 
-  let rec print fmt f = match f with
-    | CNF l -> _print_clauses fmt l
-    | Quant (q,lits,cnf) ->
-        Format.fprintf fmt "@[%a %a.@ @[%a@]@]" _print_quant q
-          (print_l ~sep:" " Lit.print) lits print cnf
+  let print_with ~pp_lit fmt f =
+    let rec _print fmt f = match f with
+      | CNF l -> _print_clauses ~pp_lit fmt l
+      | Quant (q,lits,cnf) ->
+          Format.fprintf fmt "@[<hov 4>%a @[%a@].@ @[<hov2>%a@]" _print_quant q
+            (print_l ~sep:" " pp_lit) lits _print cnf
+    in _print fmt f
+
+  let print = print_with ~pp_lit:Lit.print
 end
 
 (** {2 a QBF formula} *)
@@ -170,26 +176,30 @@ module Formula = struct
   let compare = Pervasives.compare
   let hash = Hashtbl.hash
 
-  let rec print fmt f = match f with
-    | Quant (q,lits,f') ->
-        Format.fprintf fmt "@[%a %a.@ @[%a@]@]" _print_quant q
-          (print_l ~sep:" " Lit.print) lits print f'
-    | Form f -> print_f fmt f
-  and print_f fmt f = match f with
-    | Atom a -> Lit.print fmt a
-    | True -> Format.pp_print_string fmt "true"
-    | False -> Format.pp_print_string fmt "false"
-    | Not f -> Format.fprintf fmt "@[¬@ %a@]" print_f' f
-    | And l -> Format.fprintf fmt "@[%a@]" (print_l ~sep:"∧" print_f') l
-    | Or l -> Format.fprintf fmt "@[%a@]" (print_l ~sep:"v" print_f') l
-    | XOr l -> Format.fprintf fmt "@[Xor %a@]" (print_l ~sep:" " print_f') l
-    | Equiv l -> Format.fprintf fmt "@[Equiv %a@]" (print_l ~sep:" " print_f') l
-    | Imply (a,b) -> Format.fprintf fmt "@[%a => %a@]" print_f' a print_f' b
-  and print_f' fmt f = match f with
-    | Atom _
-    | True
-    | False -> print_f fmt f
-    | _ -> Format.fprintf fmt "@[(%a)@]" print_f f
+  let print_with ~pp_lit fmt f =
+    let rec print fmt f = match f with
+      | Quant (q,lits,f') ->
+          Format.fprintf fmt "@[<hov2>%a @[%a@].@ @[%a@]@]" _print_quant q
+            (print_l ~sep:" " pp_lit) lits print f'
+      | Form f -> print_f fmt f
+    and print_f fmt f = match f with
+      | Atom a -> pp_lit fmt a
+      | True -> Format.pp_print_string fmt "true"
+      | False -> Format.pp_print_string fmt "false"
+      | Not f -> Format.fprintf fmt "¬ %a" print_f' f
+      | And l -> Format.fprintf fmt "@[%a@]" (print_l ~sep:" ∧ " print_f') l
+      | Or l -> Format.fprintf fmt "@[%a@]" (print_l ~sep:" v " print_f') l
+      | XOr l -> Format.fprintf fmt "@[Xor %a@]" (print_l ~sep:" " print_f') l
+      | Equiv l -> Format.fprintf fmt "@[Equiv %a@]" (print_l ~sep:" " print_f') l
+      | Imply (a,b) -> Format.fprintf fmt "@[@[%a@] => @[%a@]@]" print_f' a print_f' b
+    and print_f' fmt f = match f with
+      | Atom _
+      | True
+      | False -> print_f fmt f
+      | _ -> Format.fprintf fmt "@[(%a)@]" print_f f
+    in print fmt f
+
+  let print = print_with ~pp_lit:Lit.print
 
   let rec simplify = function
     | Quant (q, lits, f) -> Quant (q, lits, simplify f)

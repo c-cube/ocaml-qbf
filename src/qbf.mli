@@ -35,6 +35,8 @@ type quantifier =
   | Forall
   | Exists
 
+type 'a printer = Format.formatter -> 'a -> unit
+
 (** {2 a QBF literal} *)
 module Lit : sig
   type t = int
@@ -72,7 +74,9 @@ module CNF : sig
   val equal : t -> t -> bool
   val compare : t -> t -> int
   val hash : t -> int
-  val print : Format.formatter -> t -> unit
+
+  val print : t printer
+  val print_with : pp_lit:Lit.t printer -> t printer
 end
 
 (** {2 a QBF formula}
@@ -112,7 +116,9 @@ module Formula : sig
   val equal : t -> t -> bool
   val compare : t -> t -> int
   val hash : t -> int
-  val print : Format.formatter -> t -> unit
+
+  val print : t printer
+  val print_with : pp_lit:Lit.t printer -> t printer
 
   val simplify : t -> t
   (** Simplifications *)
