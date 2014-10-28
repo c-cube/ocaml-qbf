@@ -12,9 +12,6 @@ Synopsis:   QBF solving in OCaml, including bindings
 
 PostConfCommand:        make deps
 
-# magiiiic so that '-lquantor' works
-PostInstallCommand:     cp libs/quantor-3.0/libquantor.a `ocamlfind query qbf`
-
 Flag "quantor"
   Description:          build and install the binding "qbf.quantor"
   Default:              true
@@ -38,6 +35,10 @@ Library "qbf-quantor"
   Build$:               flag(quantor)
   Install$:             flag(quantor)
   BuildDepends:         qbf
+
+# magiiiic so that '-lquantor' works
+if flag(quantor)
+    PostInstallCommand:     cp libs/quantor-3.0/libquantor.a `ocamlfind query qbf`
 
 Library "qbf-random"
   Path:                 src/random/
