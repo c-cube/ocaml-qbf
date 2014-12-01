@@ -97,18 +97,22 @@ module CNF = struct
   let compare = Pervasives.compare
   let hash = Hashtbl.hash
 
-  let _print_clause ~pp_lit fmt c =
-    Format.fprintf fmt "@[<hov 2>(%a)@]" (print_l ~sep:" ∨ " pp_lit) c
+  let _print_clause ~pp_lit fmt c = match c with
+    | [] -> Format.pp_print_string fmt "[]"
+    | [x] -> pp_lit fmt x
+    | _::_::_ ->
+        Format.fprintf fmt "@[<hov 2>(%a)@]" (print_l ~sep:" ∨ " pp_lit) c
   let _print_clauses ~pp_lit fmt l =
-    Format.fprintf fmt "@[<hov>%a@]" (print_l ~sep:", " (_print_clause ~pp_lit)) l
+    Format.fprintf fmt "@[<hv>%a@]" (print_l ~sep:", " (_print_clause ~pp_lit)) l
 
   let print_with ~pp_lit fmt f =
     let rec _print fmt f = match f with
       | CNF l -> _print_clauses ~pp_lit fmt l
       | Quant (q,lits,cnf) ->
-          Format.fprintf fmt "@[<hov 4>%a @[%a@].@ @[<hov2>%a@]" _print_quant q
+          Format.fprintf fmt "%a @[%a@].@ %a" _print_quant q
             (print_l ~sep:" " pp_lit) lits _print cnf
-    in _print fmt f
+    in
+    Format.fprintf fmt "@[<hov2>%a@]" _print f
 
   let print = print_with ~pp_lit:Lit.print
 end
