@@ -1,0 +1,12 @@
+opam-version: "1"
+maintainer: "simon.cruanes@inria.fr"
+build: [
+    ["./configure" "--enable-quantor" "--docdir=%{doc}%" "--disable-random"]
+    [make "all" "install"]
+]
+remove: [
+    ["ocamlfind" "remove" "qbf"]
+]
+depends: ["ocamlfind"]
+tags: [ "qbf" "solver" "quantor" ]
+homepage: "https://github.com/c-cube/ocaml-qbf/"
