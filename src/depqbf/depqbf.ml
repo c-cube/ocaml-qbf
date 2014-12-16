@@ -34,11 +34,14 @@ type var_id = int
 type constraint_id = int
 type lit_id = int  (* signed *)
 
+(* dynamic library to use *)
+let from = Dl.dlopen ~filename:"libqdpll.so" ~flags:[Dl.RTLD_LAZY]
+
 (* main type *)
 type qdpll
 let qdpll : qdpll C.structure C.typ = C.structure "QDPLL"
 
-let qdpll_delete = F.foreign "qdpll_delete" C.(ptr qdpll @-> returning void)
+let qdpll_delete = F.foreign ~from "qdpll_delete" C.(ptr qdpll @-> returning void)
 
 (** {2 Views} *)
 
@@ -81,37 +84,37 @@ let assignment = C.view
 
 (** {2 API} *)
 
-let create = F.foreign "qdpll_create" C.(void @-> returning t)
+let create = F.foreign ~from "qdpll_create" C.(void @-> returning t)
 
 let configure =
-  F.foreign "qdpll_configure" C.(t @-> string @-> returning void)
+  F.foreign ~from "qdpll_configure" C.(t @-> string @-> returning void)
 
 (* TODO: qdpll_adjust_vars *)
 
 let max_scope_nesting =
-  F.foreign "qdpll_get_max_scope_nesting" C.(t @-> returning int)
+  F.foreign ~from "qdpll_get_max_scope_nesting" C.(t @-> returning int)
 
-let push = F.foreign "qdpll_push" C.(t @-> returning void)
+let push = F.foreign ~from "qdpll_push" C.(t @-> returning void)
 
-let pop = F.foreign "qdpll_pop" C.(t @-> returning int)
+let pop = F.foreign ~from "qdpll_pop" C.(t @-> returning int)
 
-let gc = F.foreign "qdpll_gc" C.(t @-> returning void)
+let gc = F.foreign ~from "qdpll_gc" C.(t @-> returning void)
 
-let new_scope = F.foreign "qdpll_new_scope" C.(t @-> quant @-> returning int)
+let new_scope = F.foreign ~from "qdpll_new_scope" C.(t @-> quant @-> returning int)
 
 let new_scope_at_nesting =
-  F.foreign "qdpll_new_scope_at_nesting" C.(t @-> quant @-> int @-> returning int)
+  F.foreign ~from "qdpll_new_scope_at_nesting" C.(t @-> quant @-> int @-> returning int)
 
-let get_value = F.foreign "qdpll_get_value" C.(t @-> int @-> returning assignment)
+let get_value = F.foreign ~from "qdpll_get_value" C.(t @-> int @-> returning assignment)
 
 let add_var_to_scope =
-  F.foreign "qdpll_add_var_to_scope" C.(t @-> int @-> int @-> returning void)
+  F.foreign ~from "qdpll_add_var_to_scope" C.(t @-> int @-> int @-> returning void)
 
 (* TODO: qdpll_has_var_active_occs *)
 
-let add = F.foreign "qdpll_add" C.(t @-> int @-> returning void)
+let add = F.foreign ~from "qdpll_add" C.(t @-> int @-> returning void)
 
-let qdpll_sat = F.foreign "qdpll_sat" C.(t @-> returning int)
+let qdpll_sat = F.foreign ~from "qdpll_sat" C.(t @-> returning int)
 
 let sat s = match qdpll_sat s with
   | 0 -> Qbf.Unknown
@@ -119,8 +122,8 @@ let sat s = match qdpll_sat s with
   | 20 -> Qbf.Unsat
   | n -> failwith ("unknown depqbf result: " ^ string_of_int n)
 
-let reset = F.foreign "qdpll_reset" C.(t @-> returning void)
+let reset = F.foreign ~from "qdpll_reset" C.(t @-> returning void)
 
-let assume = F.foreign "qdpll_assume" C.(t @-> int @-> returning void)
+let assume = F.foreign ~from "qdpll_assume" C.(t @-> int @-> returning void)
 
 (* TODO: remaining funs *)

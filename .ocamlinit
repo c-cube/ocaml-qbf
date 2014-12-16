@@ -1,5 +1,8 @@
 
 #directory "_build/src";;
+#directory "_build/src/random/";;
+#directory "_build/src/quantor/";;
+#directory "_build/src/depqbf/";;
 #load "qbf.cma";;
 
 #install_printer Qbf.Lit.print;;
@@ -9,12 +12,9 @@
 print_endline "loaded Qbf";;
 
 #require "random-generator";;
-#directory "_build/src/random/";;
 #load "qbf-random.cma";;
-
-print_endline "loaded QbfRandom";;
-
-#directory "_build/src/quantor/";;
 #load "qbf-quantor.cma";;
 
-print_endline "loaded Quantor";;
+#require "ctypes.foreign";;
+#load "qbf-depqbf.cma";;
+

@@ -10,7 +10,7 @@ install: [
     [make "install"]
 ]
 remove: [
-    [ocamlfind "remove" "qbf"]
+    ["ocamlfind" "remove" "qbf"]
 ]
 depends: ["ocamlfind"]
 depopts: ["conf-depqbf" "ctypes"]

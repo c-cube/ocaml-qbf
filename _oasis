@@ -5,7 +5,7 @@ Homepage:    https://github.com/c-cube/ocaml-qbf
 Authors:     Simon Cruanes
 License:     BSD-3-clause
 LicenseFile: LICENSE
-Plugins:     META (0.3), DevFiles (0.3)
+Plugins:     META (0.4), DevFiles (0.4)
 BuildTools:  ocamlbuild
 
 Synopsis:   QBF solving in OCaml, including bindings to solvers
@@ -15,12 +15,12 @@ Description:
     as simplifications and reduction to CNF.
 
     It packs:
-
-PostConfCommand:        make deps
+    - a binding to quantor, which is shipped with the library
+    - a binding to Depqbf
 
 Flag "quantor"
   Description:          build and install the binding "qbf.quantor"
-  Default:              true
+  Default:              false
 
 Flag "random"
   Description:          build and install random generators (depends on "random-generator")
@@ -31,8 +31,11 @@ Flag "depqbf"
   Default:              false
 
 Library "qbf"
-  Path:                 src
+  Path:                 src/
   Modules:              Qbf
+
+if flag(quantor)
+    PostConfCommand:    make deps
 
 Library "qbf-quantor"
   Path:                 src/quantor/
@@ -51,14 +54,14 @@ if flag(quantor)
     PostInstallCommand:     cp libs/quantor-3.0/libquantor.a `ocamlfind query qbf`
 
 Library "qbf-depqbf"
-  Path:                 src/depqbf
+  Path:                 src/depqbf/
   Modules:              Depqbf
+  BuildDepends:         qbf, ctypes, ctypes.foreign
   FindlibName:          depqbf
   FindlibParent:        qbf
-  CCLib:                -lqdpll
+  CCLib:                -L/usr/local/lib
   Build$:               flag(depqbf)
   Install$:             flag(depqbf)
-  BuildDepends:         ctypes, qbf
 
 Library "qbf-random"
   Path:                 src/random/
