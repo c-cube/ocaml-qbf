@@ -1,12 +1,20 @@
-opam-version: "1"
+opam-version: "1.2"
+author: "simon.cruanes@inria.fr"
 maintainer: "simon.cruanes@inria.fr"
 build: [
-    ["./configure" "--enable-quantor" "--docdir=%{doc}%" "--disable-random"]
-    [make "all" "install"]
+    ["./configure" "--enable-quantor" "--%{conf-depqbf+ctypes:enable}%-depqbf"
+        "--docdir=%{doc}%" "--disable-random"]
+    [make "all"]
+]
+install: [
+    [make "install"]
 ]
 remove: [
-    ["ocamlfind" "remove" "qbf"]
+    [ocamlfind "remove" "qbf"]
 ]
 depends: ["ocamlfind"]
+depopts: ["conf-depqbf" "ctypes"]
 tags: [ "qbf" "solver" "quantor" ]
 homepage: "https://github.com/c-cube/ocaml-qbf/"
+dev-repo: "https://github.com/c-cube/ocaml-qbf.git"
+bug-reports: "https://github.com/c-cube/ocaml-qbf/issues"

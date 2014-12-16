@@ -84,7 +84,7 @@ let random_form_size size : F.t G.gen =
   let recurse : (quantifier_state -> F.t gen) fueled =
     Fuel.fix
       (fun self () ->
-        Fuel.choose
+        Fuel.choose (* TODO: heavier weight on quantifier *)
           [ unary (self ()) (fun f' qst -> _quantify qst f')
           ; unary _mk_form (fun f' qst -> map F.form (f' qst))
           ]

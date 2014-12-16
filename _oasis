@@ -8,7 +8,13 @@ LicenseFile: LICENSE
 Plugins:     META (0.3), DevFiles (0.3)
 BuildTools:  ocamlbuild
 
-Synopsis:   QBF solving in OCaml, including bindings
+Synopsis:   QBF solving in OCaml, including bindings to solvers
+Description:
+    Ocaml-qbf provides a unified API to several QBF solvers, along with
+    common types for formulas, QCNF and literals and operations such
+    as simplifications and reduction to CNF.
+
+    It packs:
 
 PostConfCommand:        make deps
 
@@ -18,6 +24,10 @@ Flag "quantor"
 
 Flag "random"
   Description:          build and install random generators (depends on "random-generator")
+  Default:              false
+
+Flag "depqbf"
+  Description:          build and install bindings to DEPQBF (requires it to be installed)
   Default:              false
 
 Library "qbf"
@@ -39,6 +49,16 @@ Library "qbf-quantor"
 # magiiiic so that '-lquantor' works
 if flag(quantor)
     PostInstallCommand:     cp libs/quantor-3.0/libquantor.a `ocamlfind query qbf`
+
+Library "qbf-depqbf"
+  Path:                 src/depqbf
+  Modules:              Depqbf
+  FindlibName:          depqbf
+  FindlibParent:        qbf
+  CCLib:                -lqdpll
+  Build$:               flag(depqbf)
+  Install$:             flag(depqbf)
+  BuildDepends:         ctypes, qbf
 
 Library "qbf-random"
   Path:                 src/random/
