@@ -42,7 +42,7 @@ val configure : t -> string -> unit
 
 val max_scope_nesting : t -> nesting
 
-val push : t -> unit
+val push : t -> int
 (** Push a new frame index and returns it *)
 
 val pop : t -> int

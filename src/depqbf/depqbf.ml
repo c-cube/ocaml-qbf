@@ -92,7 +92,7 @@ let configure =
 let max_scope_nesting =
   F.foreign "qdpll_get_max_scope_nesting" C.(t @-> returning int)
 
-let push = F.foreign "qdpll_push" C.(t @-> returning void)
+let push = F.foreign "qdpll_push" C.(t @-> returning int)
 
 let pop = F.foreign "qdpll_pop" C.(t @-> returning int)
 
