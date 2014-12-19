@@ -59,7 +59,7 @@ Library "qbf-depqbf"
   BuildDepends:         qbf, ctypes, ctypes.foreign
   FindlibName:          depqbf
   FindlibParent:        qbf
-  CCLib:                -L/usr/local/lib
+  CCLib:                -L/usr/local/lib -lqdpll
   Build$:               flag(depqbf)
   Install$:             flag(depqbf)
 
