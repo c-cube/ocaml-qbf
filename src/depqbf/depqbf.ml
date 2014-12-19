@@ -55,6 +55,7 @@ let t = C.view
   ~write:(fun {s} -> s)
   ~read:(fun s ->
     let r = {s} in
+    Obj.set_tag (Obj.repr r) Obj.no_scan_tag; (* no GC inside *)
     Gc.finalise (fun {s} -> qdpll_delete s) r;
     r
   ) (C.ptr qdpll)
@@ -123,6 +124,10 @@ let sat s = match qdpll_sat s with
   | n -> failwith ("unknown depqbf result: " ^ string_of_int n)
 
 let reset = F.foreign ~from "qdpll_reset" C.(t @-> returning void)
+
+let check s =
+  reset s;
+  sat s
 
 let assume = F.foreign ~from "qdpll_assume" C.(t @-> int @-> returning void)
 

@@ -63,8 +63,14 @@ val add_var_to_scope : t -> var_id -> nesting -> unit
 val add : t -> lit_id -> unit
 
 val sat : t -> Qbf.result
+(** Caution: call {!reset} between two calls to [sat]. Consider
+    using {!check} instead. *)
 
 val reset : t -> unit
+(** Reset the current assignment. Careful. *)
+
+val check : t -> Qbf.result
+(** Higher-level interface to {!sat} *)
 
 val assume : t -> lit_id -> unit
 
