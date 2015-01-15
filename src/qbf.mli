@@ -26,16 +26,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (** {1 Bindings to Quantor} *)
 
+type 'a printer = Format.formatter -> 'a -> unit
+
 type assignment =
   | True
   | False
   | Undef
 
+val pp_assignment : assignment printer
+
 type quantifier =
   | Forall
   | Exists
 
-type 'a printer = Format.formatter -> 'a -> unit
+val pp_quantifier : quantifier printer
 
 (** {2 a QBF literal} *)
 module Lit : sig
@@ -137,6 +141,8 @@ type result =
   | Unsat
   | Timeout
   | Spaceout
+
+val pp_result : result printer
 
 type solver = {
   name : string;

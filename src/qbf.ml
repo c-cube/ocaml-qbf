@@ -26,16 +26,25 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (** {1 Bindings to Quantor} *)
 
+type 'a printer = Format.formatter -> 'a -> unit
+
 type assignment =
   | True
   | False
   | Undef
 
+let pp_assignment fmt = function
+  | True -> Format.pp_print_string fmt "true"
+  | False -> Format.pp_print_string fmt "false"
+  | Undef -> Format.pp_print_string fmt "undef"
+
 type quantifier =
   | Forall
   | Exists
 
-type 'a printer = Format.formatter -> 'a -> unit
+let pp_quantifier fmt = function
+  | Forall -> Format.pp_print_string fmt "forall"
+  | Exists -> Format.pp_print_string fmt "exists"
 
 (** {2 a QBF literal} *)
 module Lit = struct
@@ -382,6 +391,14 @@ type result =
   | Unsat
   | Timeout
   | Spaceout
+
+let pp_result fmt = function
+  | Unknown -> Format.pp_print_string fmt "unknown"
+  | Sat _ -> Format.pp_print_string fmt "sat"
+  | Unsat -> Format.pp_print_string fmt "unsat"
+  | Timeout -> Format.pp_print_string fmt "timeout"
+  | Spaceout -> Format.pp_print_string fmt "spaceout"
+
 
 type solver = {
   name : string;
