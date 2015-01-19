@@ -26,7 +26,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (** {1 Bindings to DEPQBF} *)
 
-type nesting = private int
+type nesting = int
 type var_id = int  (* unsigned *)
 type lit_id = int  (* signed *)
 type constraint_id = int
