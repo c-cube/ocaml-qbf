@@ -41,6 +41,9 @@ type quantifier =
 
 val pp_quantifier : quantifier printer
 
+val fresh_int : unit -> int
+(** Unique (positive) int generator. Used by {!Formula.cnf} *)
+
 (** {2 a QBF literal} *)
 module Lit : sig
   type t = int
@@ -95,8 +98,9 @@ module Formula : sig
     | And of form list
     | Or of form list
     | Imply of form * form
-    | XOr of form list  (* exactly one element in the list is true *)
-    | Equiv of form list (* all the elements are true, or all of them are false *)
+    | XOr of form list  (** exactly one element in the list is true *)
+    | Equiv of form list (** all the elements are true, or all
+                              of them are false *)
     | True
     | False
     | Not of form
@@ -127,10 +131,12 @@ module Formula : sig
   val simplify : t -> t
   (** Simplifications *)
 
-  val cnf : t -> CNF.t
+  val cnf : ?gensym:(unit -> Lit.t) -> t -> CNF.t
   (** Convert the formula into a prenex-clausal normal form. This can use
       some Tseitin conversion, introducing new literals, to avoid the
-      exponential blowup that can sometimes occur *)
+      exponential blowup that can sometimes occur.
+      @param gensym a way to generate new literals to avoid exponential
+        blowup. Default is {!fresh_int}. *)
 end
 
 (** {2 Solvers} *)

@@ -46,6 +46,12 @@ let pp_quantifier fmt = function
   | Forall -> Format.pp_print_string fmt "forall"
   | Exists -> Format.pp_print_string fmt "exists"
 
+let fresh_int =
+  let r = ref 0 in
+  fun () ->
+    incr r;
+    !r
+
 (** {2 a QBF literal} *)
 module Lit = struct
   type t = int
@@ -112,7 +118,8 @@ module CNF = struct
     | _::_::_ ->
         Format.fprintf fmt "@[<hov 2>(%a)@]" (print_l ~sep:" ∨ " pp_lit) c
   let _print_clauses ~pp_lit fmt l =
-    Format.fprintf fmt "@[<hv>%a@]" (print_l ~sep:", " (_print_clause ~pp_lit)) l
+    Format.fprintf fmt "@[<hv>%a@]"
+      (print_l ~sep:", " (_print_clause ~pp_lit)) l
 
   let print_with ~pp_lit fmt f =
     let rec _print fmt f = match f with
@@ -135,8 +142,8 @@ module Formula = struct
     | And of form list
     | Or of form list
     | Imply of form * form
-    | XOr of form list  (* exactly one element in the list is true *)
-    | Equiv of form list (* all the elements are true, or all of them are false *)
+    | XOr of form list
+    | Equiv of form list
     | True
     | False
     | Not of form
@@ -203,8 +210,10 @@ module Formula = struct
       | And l -> Format.fprintf fmt "@[%a@]" (print_l ~sep:" ∧ " print_f') l
       | Or l -> Format.fprintf fmt "@[%a@]" (print_l ~sep:" v " print_f') l
       | XOr l -> Format.fprintf fmt "@[Xor %a@]" (print_l ~sep:" " print_f') l
-      | Equiv l -> Format.fprintf fmt "@[Equiv %a@]" (print_l ~sep:" " print_f') l
-      | Imply (a,b) -> Format.fprintf fmt "@[@[%a@] => @[%a@]@]" print_f' a print_f' b
+      | Equiv l ->
+          Format.fprintf fmt "@[Equiv %a@]" (print_l ~sep:" " print_f') l
+      | Imply (a,b) ->
+          Format.fprintf fmt "@[@[%a@] => @[%a@]@]" print_f' a print_f' b
     and print_f' fmt f = match f with
       | Atom _
       | True
@@ -250,34 +259,31 @@ module Formula = struct
   module CnfAlgo = struct
 
     type ctx = {
-      gensym : unit -> Lit.t;
-      meet_lits : Lit.t list -> unit; (* those lits are quantified *)
+      mk_new_lit : unit -> Lit.t; (* get a fresh literal *)
       add_clauses : CNF.clause list -> unit; (* declare clauses *)
       get_clauses : unit -> CNF.clause list; (* all clauses so far *)
       get_newlits : unit -> Lit.t list;  (* gensym'd literals *)
     }
 
-    let mk_ctx () =
-      let _maxvar = ref 0 in
-      let _clauses = ref [] in
-      let _newlits = ref [] in
-      { gensym=(fun () ->
-          incr _maxvar;
-          let x = !_maxvar in
-          _newlits := x :: !_newlits;
-          x
+    let mk_ctx gensym =
+      let clauses = ref [] in
+      let newlits = ref [] in
+      let mk_new_lit () =
+        let x = fresh_int () in
+        newlits := x :: !newlits;
+        x
+      in
+      { mk_new_lit;
+        add_clauses=(fun cs ->
+          clauses := List.rev_append cs !clauses
         );
-        meet_lits=(fun lits ->
-          List.iter (fun i -> _maxvar := max !_maxvar (Lit.to_int i)) lits
-        );
-        add_clauses=(fun cs -> _clauses := List.rev_append cs !_clauses);
-        get_clauses=(fun () -> !_clauses);
-        get_newlits=(fun () -> !_newlits);
+        get_clauses=(fun () -> !clauses);
+        get_newlits=(fun () -> !newlits);
       }
 
     (* rename [And_{c in clauses} c] into an atom *)
     let rename_clauses ~ctx clauses =
-      let x = ctx.gensym() in
+      let x = ctx.mk_new_lit () in
       (* definition of [x]: [not x or c] for every [c] in [clauses] *)
       let side_clauses = List.rev_map
         (fun c -> Lit.neg x :: c)
@@ -286,7 +292,8 @@ module Formula = struct
       ctx.add_clauses side_clauses;
       x
 
-    (* list of [f (x,y)] for [x,y] elements of [l] with x occurring before y *)
+    (* list of [f (x,y)] for [x,y] elements of [l] with
+       [x] occurring before [y] *)
     let map_diagonal f l =
       let rec gen acc l = match l with
       | [] -> acc
@@ -358,7 +365,10 @@ module Formula = struct
       | [] :: _ -> acc (* trivial, so product is trivial *)
       | [c] :: tail ->
           (* add [c] to every clause so far *)
-          let previous = List.rev_map (fun c' -> List.rev_append c c') previous in
+          let previous = List.rev_map
+            (fun c' -> List.rev_append c c')
+            previous
+          in
           cnf_list ~ctx acc previous tail
       | clauses :: tail ->
           (* rename [clauses] into a new atom *)
@@ -369,7 +379,6 @@ module Formula = struct
     (* traverse prenex quantifiers, and convert inner formula into CNF *)
     let rec traverse ~ctx:ctx f = match f with
       | Quant (q, lits, f') ->
-          ctx.meet_lits lits;
           CNF.quantify q lits (traverse ~ctx f')
       | Form f ->
           (* CNF of [f], plus a list of new variables to quantify on
@@ -380,7 +389,9 @@ module Formula = struct
           CNF.exists (ctx.get_newlits ()) cnf
   end
 
-  let cnf f = CnfAlgo.traverse ~ctx:(CnfAlgo.mk_ctx()) f
+  let cnf ?(gensym=fresh_int) f =
+    let ctx = CnfAlgo.mk_ctx gensym in
+    CnfAlgo.traverse ~ctx f
 end
 
 (** {2 Solvers} *)
