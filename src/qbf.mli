@@ -41,9 +41,6 @@ type quantifier =
 
 val pp_quantifier : quantifier printer
 
-val fresh_int : unit -> int
-(** Unique (positive) int generator. Used by {!Formula.cnf} *)
-
 (** {2 a QBF literal} *)
 module Lit : sig
   type t = private int
@@ -63,6 +60,9 @@ module Lit : sig
   val sign : t -> bool (** Get sign *)
   val apply_sign : bool -> t -> t (** Swap sign iff the bool is false *)
   val set_sign : bool -> t -> t  (** Positive if true, negative otherwise *)
+
+  val fresh : unit -> t
+  (** Generator for fresh, unique lits *)
 
   val equal : t -> t -> bool
   val compare : t -> t -> int
@@ -142,7 +142,7 @@ module Formula : sig
       some Tseitin conversion, introducing new literals, to avoid the
       exponential blowup that can sometimes occur.
       @param gensym a way to generate new literals to avoid exponential
-        blowup. Default is {!fresh_int}. *)
+        blowup. Default is {!Lit.fresh}. *)
 end
 
 (** {2 Solvers} *)

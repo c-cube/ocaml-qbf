@@ -46,12 +46,6 @@ let pp_quantifier fmt = function
   | Forall -> Format.pp_print_string fmt "forall"
   | Exists -> Format.pp_print_string fmt "exists"
 
-let fresh_int =
-  let r = ref 0 in
-  fun () ->
-    incr r;
-    !r
-
 (** {2 a QBF literal} *)
 module Lit = struct
   type t = int
@@ -69,6 +63,12 @@ module Lit = struct
   let neg i = -i
   let apply_sign b i = if b then i else neg i
   let set_sign b i = if b then abs i else neg (abs i)
+
+  let fresh =
+    let r = ref 0 in
+    fun () ->
+      incr r;
+      !r
 
   let equal (i:int) j = i=j
   let compare (i:int) j = Pervasives.compare i j
@@ -276,7 +276,7 @@ module Formula = struct
       let clauses = ref [] in
       let newlits = ref [] in
       let mk_new_lit () =
-        let x = fresh_int () in
+        let x = Lit.fresh () in
         newlits := x :: !newlits;
         x
       in
@@ -396,7 +396,7 @@ module Formula = struct
           CNF.exists (ctx.get_newlits ()) cnf
   end
 
-  let cnf ?(gensym=fresh_int) f =
+  let cnf ?(gensym=Lit.fresh) f =
     let ctx = CnfAlgo.mk_ctx gensym in
     CnfAlgo.traverse ~ctx f
 end
