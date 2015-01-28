@@ -64,8 +64,15 @@ module Lit = struct
   let neg i = ~- i
   let to_int i = abs i
 
+  let sign i = i>0
+  let abs = abs
+  let neg i = -i
+  let apply_sign b i = if b then i else neg i
+  let set_sign b i = if b then abs i else neg (abs i)
+
   let equal (i:int) j = i=j
   let compare (i:int) j = Pervasives.compare i j
+  let hash_fun i h = Int64.of_int (Hashtbl.hash (i,h))
   let hash i = i land max_int
   let print fmt i =
     if i>0

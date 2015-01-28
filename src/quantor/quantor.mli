@@ -26,6 +26,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (** {1 Bindings to Quantor} *)
 
+type lit = Qbf.Lit.t
+
 (** {2 Direct Bindings} *)
 
 module Raw : sig
@@ -41,10 +43,10 @@ module Raw : sig
   val scope : t -> Qbf.quantifier -> unit
   (** Open a new scope with the given kind of quantifier *)
 
-  val add : t -> int -> unit
+  val add : t -> lit -> unit
   (** Add a literal, or end the current clause/scope with [0] *)
 
-  val deref : t -> int -> Qbf.assignment
+  val deref : t -> lit -> Qbf.assignment
   (** Obtain the value of this literal in the current model *)
 end
 

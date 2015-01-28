@@ -27,8 +27,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (** {1 Bindings to DEPQBF} *)
 
 type nesting = int
-type var_id = int  (* unsigned *)
-type lit_id = int  (* signed *)
+type var_id = Qbf.Lit.t (* unsigned *)
+type lit_id = Qbf.Lit.t  (* signed *)
 type constraint_id = int
 
 type t

@@ -46,7 +46,7 @@ val fresh_int : unit -> int
 
 (** {2 a QBF literal} *)
 module Lit : sig
-  type t = int
+  type t = private int
   (** A boolean literal is only a non-zero integer *)
 
   val make : int -> t
@@ -59,9 +59,15 @@ module Lit : sig
   val to_int : t -> int
   (** The underlying atom, or name (strictly positive integer) *)
 
+  val abs : t -> t  (** Remove sign *)
+  val sign : t -> bool (** Get sign *)
+  val apply_sign : bool -> t -> t (** Swap sign iff the bool is false *)
+  val set_sign : bool -> t -> t  (** Positive if true, negative otherwise *)
+
   val equal : t -> t -> bool
   val compare : t -> t -> int
   val hash : t -> int
+  val hash_fun : t -> int64 -> int64
   val print : Format.formatter -> t -> unit
 end
 

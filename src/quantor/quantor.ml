@@ -29,6 +29,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 type quantor
 (** Abstract type of Quantor solver *)
 
+type lit = Qbf.Lit.t
+
 external quantor_create : unit -> quantor = "quantor_stub_create"
 
 external quantor_delete : quantor -> unit = "quantor_stub_delete"
@@ -57,8 +59,8 @@ module Raw = struct
     Gc.finalise (fun _ -> quantor_delete _q) q;
     q
 
-  let deref (Quantor q) i =
-    match quantor_deref q i with
+  let deref (Quantor q) (i : lit) =
+    match quantor_deref q (i:>int) with
     | 0 -> Qbf.False
     | 1 -> Qbf.True
     | -1 -> Qbf.Undef
@@ -68,7 +70,7 @@ module Raw = struct
     let i = quantor_sat q in
     match i with
       | 0 -> Qbf.Unknown
-      | 10 -> Qbf.Sat (fun i -> deref solver (Qbf.Lit.to_int i))
+      | 10 -> Qbf.Sat (fun i -> deref solver (Qbf.Lit.abs i))
       | 20 -> Qbf.Unsat
       | 30 -> Qbf.Timeout
       | 40 -> Qbf.Spaceout
@@ -84,13 +86,13 @@ end
 let rec _add_cnf solver cnf = match cnf with
   | Qbf.CNF.Quant (quant, lits, cnf') ->
       Raw.scope solver quant;
-      List.iter (fun lit -> Raw.add solver lit) lits;
+      List.iter (fun lit -> Raw.add solver (lit:lit:>int)) lits;
       Raw.add solver 0;
       _add_cnf solver cnf'
   | Qbf.CNF.CNF clauses ->
       List.iter
         (fun c ->
-          List.iter (fun lit -> Raw.add solver lit) c;
+          List.iter (fun lit -> Raw.add solver (lit:lit:>int)) c;
           Raw.add solver 0;
         ) clauses
 

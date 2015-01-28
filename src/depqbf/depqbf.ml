@@ -30,9 +30,9 @@ module C = Ctypes
 module F = Foreign
 
 type nesting = int
-type var_id = int
+type var_id = Qbf.Lit.t (* unsigned *)
+type lit_id = Qbf.Lit.t  (* signed *)
 type constraint_id = int
-type lit_id = int  (* signed *)
 
 (* main type *)
 type qdpll
@@ -56,6 +56,11 @@ let t = C.view
     Gc.finalise (fun {s} -> qdpll_delete s) r;
     r
   ) (C.ptr qdpll)
+
+let lit = C.view
+  ~write:(fun (i:lit_id) -> (i:>int))
+  ~read:(fun i -> Qbf.Lit.make i)
+  C.int
 
 let quant = C.view
   ~write:(function
@@ -98,19 +103,22 @@ let pop = F.foreign "qdpll_pop" C.(t @-> returning int)
 
 let gc = F.foreign "qdpll_gc" C.(t @-> returning void)
 
-let new_scope = F.foreign "qdpll_new_scope" C.(t @-> quant @-> returning int)
+let new_scope = F.foreign "qdpll_new_scope"
+  C.(t @-> quant @-> returning int)
 
 let new_scope_at_nesting =
-  F.foreign "qdpll_new_scope_at_nesting" C.(t @-> quant @-> int @-> returning int)
+  F.foreign "qdpll_new_scope_at_nesting"
+    C.(t @-> quant @-> int @-> returning int)
 
-let get_value = F.foreign "qdpll_get_value" C.(t @-> int @-> returning assignment)
+let get_value = F.foreign "qdpll_get_value"
+  C.(t @-> lit @-> returning assignment)
 
 let add_var_to_scope =
-  F.foreign "qdpll_add_var_to_scope" C.(t @-> int @-> int @-> returning void)
+  F.foreign "qdpll_add_var_to_scope" C.(t @-> lit @-> int @-> returning void)
 
 (* TODO: qdpll_has_var_active_occs *)
 
-let add = F.foreign "qdpll_add" C.(t @-> int @-> returning void)
+let add = F.foreign "qdpll_add" C.(t @-> lit @-> returning void)
 
 let qdpll_sat = F.foreign "qdpll_sat" C.(t @-> returning int)
 
@@ -126,6 +134,6 @@ let check s =
   reset s;
   sat s
 
-let assume = F.foreign "qdpll_assume" C.(t @-> int @-> returning void)
+let assume = F.foreign "qdpll_assume" C.(t @-> lit @-> returning void)
 
 (* TODO: remaining funs *)
