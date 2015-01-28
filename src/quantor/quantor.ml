@@ -80,20 +80,22 @@ module Raw = struct
     | Qbf.Forall -> quantor_scope_forall q
     | Qbf.Exists -> quantor_scope_exists q
 
-  let add (Quantor q) i = quantor_add q i
+  let add_unsafe (Quantor q) i = quantor_add q i
+
+  let add (Quantor q) i = quantor_add q (i:lit:>int)
 end
 
 let rec _add_cnf solver cnf = match cnf with
   | Qbf.CNF.Quant (quant, lits, cnf') ->
       Raw.scope solver quant;
-      List.iter (fun lit -> Raw.add solver (lit:lit:>int)) lits;
-      Raw.add solver 0;
+      List.iter (fun lit -> Raw.add solver lit) lits;
+      Raw.add_unsafe solver 0;
       _add_cnf solver cnf'
   | Qbf.CNF.CNF clauses ->
       List.iter
         (fun c ->
-          List.iter (fun lit -> Raw.add solver (lit:lit:>int)) c;
-          Raw.add solver 0;
+          List.iter (fun lit -> Raw.add solver lit) c;
+          Raw.add_unsafe solver 0;
         ) clauses
 
 let solve cnf =
