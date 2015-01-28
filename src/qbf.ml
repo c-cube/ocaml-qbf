@@ -27,6 +27,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (** {1 Bindings to Quantor} *)
 
 type 'a printer = Format.formatter -> 'a -> unit
+type 'a sequence = ('a -> unit) -> unit
 
 type assignment =
   | True
@@ -195,6 +196,26 @@ module Formula = struct
     | False -> True
     | True -> b
     | _ -> Imply (a,b)
+
+  let seq_to_list_ seq =
+    let l = ref [] in
+    seq (fun x -> l := x :: !l);
+    !l
+
+  let and_seq seq = and_l (seq_to_list_ seq)
+  let or_seq seq = or_l (seq_to_list_ seq)
+
+  let map_list_ f seq =
+    let l = ref [] in
+    seq
+      (fun x ->
+        let form = f x in
+        l := form :: !l
+      );
+    !l
+
+  let and_map ~f seq = and_l (map_list_ f seq)
+  let or_map ~f seq = or_l (map_list_ f seq)
 
   let equal = (=)
   let compare = Pervasives.compare

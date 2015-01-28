@@ -27,6 +27,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (** {1 Bindings to Quantor} *)
 
 type 'a printer = Format.formatter -> 'a -> unit
+type 'a sequence = ('a -> unit) -> unit
 
 type assignment =
   | True
@@ -87,7 +88,6 @@ end
 
 (** {2 A Quantified Boolean Formula in CNF} *)
 module QCNF : sig
-
   type t = private
     | Quant of quantifier * Lit.t list * t
     | Prop of CNF.t
@@ -124,13 +124,21 @@ module Formula : sig
 
   val true_ : t
   val false_ : t
-  val and_l : t list-> t
+  val and_l : t list -> t
+  val and_seq : t sequence -> t
   val or_l : t list -> t
+  val or_seq : t sequence -> t
   val xor_l : t list -> t
   val equiv_l : t list -> t
   val imply : t -> t -> t
   val atom : Lit.t -> t
   val neg : t -> t
+
+  val and_map : f:('a -> t) -> 'a sequence -> t
+  (** [and_map f seq] computes [f x] for each [x] in [seq], and joins
+      the resulting formulas with "and" *)
+
+  val or_map : f:('a -> t) -> 'a sequence -> t
 
   val equal : t -> t -> bool
   val compare : t -> t -> int
