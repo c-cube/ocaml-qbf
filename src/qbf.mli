@@ -71,18 +71,31 @@ module Lit : sig
   val print : Format.formatter -> t -> unit
 end
 
-(** {2 A QBF Formula in CNF} *)
+(** {2 A Boolean Formula in CNF} *)
 module CNF : sig
   type clause = Lit.t list
 
+  type t = clause list
+
+  val equal : t -> t -> bool
+  val compare : t -> t -> int
+  val hash : t -> int
+
+  val print : t printer
+  val print_with : pp_lit:Lit.t printer -> t printer
+end
+
+(** {2 A Quantified Boolean Formula in CNF} *)
+module QCNF : sig
+
   type t = private
     | Quant of quantifier * Lit.t list * t
-    | CNF of clause list
+    | Prop of CNF.t
 
   val forall : Lit.t list -> t -> t
   val exists : Lit.t list -> t -> t
   val quantify : quantifier -> Lit.t list -> t -> t
-  val cnf : clause list -> t
+  val prop : CNF.t -> t
 
   val equal : t -> t -> bool
   val compare : t -> t -> int
@@ -98,34 +111,26 @@ The formula must already be prenex, i.e. it should be nested quantifiers
 with a quantifier-free formula inside. *)
 module Formula : sig
   type t = private
-    | Quant of quantifier * Lit.t list * t
-    | Form of form
-  and form = private
-    | And of form list
-    | Or of form list
-    | Imply of form * form
-    | XOr of form list  (** exactly one element in the list is true *)
-    | Equiv of form list (** all the elements are true, or all
+    | And of t list
+    | Or of t list
+    | Imply of t * t
+    | XOr of t list  (** exactly one element in the list is true *)
+    | Equiv of t list (** all the elements are true, or all
                               of them are false *)
     | True
     | False
-    | Not of form
+    | Not of t
     | Atom of Lit.t
 
-  val forall : Lit.t list -> t -> t
-  val exists : Lit.t list -> t -> t
-  val quantify : quantifier -> Lit.t list -> t -> t
-  val form : form -> t
-
-  val true_ : form
-  val false_ : form
-  val and_l : form list-> form
-  val or_l : form list -> form
-  val xor_l : form list -> form
-  val equiv_l : form list -> form
-  val imply : form -> form -> form
-  val atom : Lit.t -> form
-  val neg : form -> form
+  val true_ : t
+  val false_ : t
+  val and_l : t list-> t
+  val or_l : t list -> t
+  val xor_l : t list -> t
+  val equiv_l : t list -> t
+  val imply : t -> t -> t
+  val atom : Lit.t -> t
+  val neg : t -> t
 
   val equal : t -> t -> bool
   val compare : t -> t -> int
@@ -145,6 +150,29 @@ module Formula : sig
         blowup. Default is {!Lit.fresh}. *)
 end
 
+module QFormula : sig
+  type t = private
+    | Quant of quantifier * Lit.t list * t
+    | Prop of Formula.t
+
+  val forall : Lit.t list -> t -> t
+  val exists : Lit.t list -> t -> t
+  val quantify : quantifier -> Lit.t list -> t -> t
+  val prop : Formula.t -> t
+
+  val equal : t -> t -> bool
+  val compare : t -> t -> int
+  val hash : t -> int
+
+  val print : t printer
+  val print_with : pp_lit:Lit.t printer -> t printer
+
+  val simplify : t -> t
+  (** Simplifications *)
+
+  val cnf : ?gensym:(unit -> Lit.t) -> t -> QCNF.t
+end
+
 (** {2 Solvers} *)
 
 type result =
@@ -158,9 +186,9 @@ val pp_result : result printer
 
 type solver = {
   name : string;
-  solve : CNF.t -> result;
+  solve : QCNF.t -> result;
 }
 
-val solve : solver:solver -> CNF.t -> result
+val solve : solver:solver -> QCNF.t -> result
 (** Check whether the CNF formula is true (satisfiable) or false
     using the given solver *)

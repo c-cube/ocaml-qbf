@@ -58,6 +58,6 @@ end
 ]}
 *)
 
-val solve : Qbf.CNF.t -> Qbf.result
+val solve : Qbf.QCNF.t -> Qbf.result
 
 val solver : Qbf.solver

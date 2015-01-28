@@ -86,12 +86,12 @@ module Raw = struct
 end
 
 let rec _add_cnf solver cnf = match cnf with
-  | Qbf.CNF.Quant (quant, lits, cnf') ->
+  | Qbf.QCNF.Quant (quant, lits, cnf') ->
       Raw.scope solver quant;
       List.iter (fun lit -> Raw.add solver lit) lits;
       Raw.add_unsafe solver 0;
       _add_cnf solver cnf'
-  | Qbf.CNF.CNF clauses ->
+  | Qbf.QCNF.Prop clauses ->
       List.iter
         (fun c ->
           List.iter (fun lit -> Raw.add solver lit) c;

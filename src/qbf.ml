@@ -99,21 +99,7 @@ let _print_quant fmt = function
 (** {2 A QBF Formula in CNF} *)
 module CNF = struct
   type clause = Lit.t list
-
-  type t =
-    | Quant of quantifier * Lit.t list * t
-    | CNF of clause list
-
-  let quantify q lits f = match lits, f with
-    | [], _ -> f
-    | _, Quant (q', lits', f') when q=q' ->
-        Quant (q, List.rev_append lits lits', f')
-    | _ -> Quant (q, lits, f)
-
-  let forall lits f = quantify Forall lits f
-  let exists lits f = quantify Exists lits f
-
-  let cnf c = CNF c
+  type t = clause list
 
   let equal = (=)
   let compare = Pervasives.compare
@@ -124,13 +110,37 @@ module CNF = struct
     | [x] -> pp_lit fmt x
     | _::_::_ ->
         Format.fprintf fmt "@[<hov 2>(%a)@]" (print_l ~sep:" ∨ " pp_lit) c
-  let _print_clauses ~pp_lit fmt l =
+
+  let print_with ~pp_lit fmt l =
     Format.fprintf fmt "@[<hv>%a@]"
       (print_l ~sep:", " (_print_clause ~pp_lit)) l
 
+  let print = print_with ~pp_lit:Lit.print
+end
+
+module QCNF = struct
+  type t =
+    | Quant of quantifier * Lit.t list * t
+    | Prop of CNF.t
+
+  let quantify q lits f = match lits, f with
+    | [], _ -> f
+    | _, Quant (q', lits', f') when q=q' ->
+        Quant (q, List.rev_append lits lits', f')
+    | _ -> Quant (q, lits, f)
+
+  let forall lits f = quantify Forall lits f
+  let exists lits f = quantify Exists lits f
+  let prop c = Prop c
+
+  let equal = (=)
+  let compare = Pervasives.compare
+  let hash = Hashtbl.hash
+
+
   let print_with ~pp_lit fmt f =
     let rec _print fmt f = match f with
-      | CNF l -> _print_clauses ~pp_lit fmt l
+      | Prop l -> CNF.print_with ~pp_lit fmt l
       | Quant (q,lits,cnf) ->
           Format.fprintf fmt "%a @[%a@].@ %a" _print_quant q
             (print_l ~sep:" " pp_lit) lits _print cnf
@@ -143,36 +153,23 @@ end
 (** {2 a QBF formula} *)
 module Formula = struct
   type t =
-    | Quant of quantifier * Lit.t list * t
-    | Form of form
-  and form =
-    | And of form list
-    | Or of form list
-    | Imply of form * form
-    | XOr of form list
-    | Equiv of form list
+    | And of t list
+    | Or of t list
+    | Imply of t * t
+    | XOr of t list
+    | Equiv of t list
     | True
     | False
-    | Not of form
+    | Not of t
     | Atom of Lit.t
 
   let true_ = True
   let false_ = False
   let atom l = Atom l
-  let form f = Form f
 
   let neg = function
     | Not f -> f
     | f -> Not f
-
-  let quantify q lits f = match lits, f with
-    | [], _ -> f
-    | _, Quant (q', lits', f') when q=q'->
-        Quant (q, List.rev_append lits lits', f')
-    | _ -> Quant (q, lits, f)
-
-  let forall lits f = quantify Forall lits f
-  let exists lits f = quantify Exists lits f
 
   let and_l = function
     | [] -> True
@@ -205,11 +202,6 @@ module Formula = struct
 
   let print_with ~pp_lit fmt f =
     let rec print fmt f = match f with
-      | Quant (q,lits,f') ->
-          Format.fprintf fmt "@[<hov2>%a @[%a@].@ @[%a@]@]" _print_quant q
-            (print_l ~sep:" " pp_lit) lits print f'
-      | Form f -> print_f fmt f
-    and print_f fmt f = match f with
       | Atom a -> pp_lit fmt a
       | True -> Format.pp_print_string fmt "true"
       | False -> Format.pp_print_string fmt "false"
@@ -224,23 +216,20 @@ module Formula = struct
     and print_f' fmt f = match f with
       | Atom _
       | True
-      | False -> print_f fmt f
-      | _ -> Format.fprintf fmt "@[(%a)@]" print_f f
+      | False -> print fmt f
+      | _ -> Format.fprintf fmt "@[(%a)@]" print f
     in print fmt f
 
   let print = print_with ~pp_lit:Lit.print
 
   let rec simplify = function
-    | Quant (q, lits, f) -> Quant (q, lits, simplify f)
-    | Form f -> Form (simplify_f f)
-  and simplify_f = function
     | Not f -> _neg_simplify f
-    | And l -> and_l (List.rev_map simplify_f l)
-    | Or l -> or_l (List.rev_map simplify_f l)
+    | And l -> and_l (List.rev_map simplify l)
+    | Or l -> or_l (List.rev_map simplify l)
     | Atom _ as f -> f
-    | Imply (a, b) -> imply (simplify_f a) (simplify_f b)
-    | XOr l -> xor_l (List.map simplify_f l)  (* TODO *)
-    | Equiv l -> equiv_l (List.map simplify_f l)
+    | Imply (a, b) -> imply (simplify a) (simplify b)
+    | XOr l -> xor_l (List.map simplify l)  (* TODO *)
+    | Equiv l -> equiv_l (List.map simplify l)
     | (True | False) as f -> f
   and _neg_simplify = function
     | Atom l -> Atom (Lit.neg l)
@@ -249,7 +238,7 @@ module Formula = struct
     | XOr l -> Not (XOr l)
     | Equiv l -> Not (Equiv l)
     | Imply (a,b) -> and_l [a; _neg_simplify b]
-    | Not f -> simplify_f f
+    | Not f -> simplify f
     | True -> False
     | False -> True
 
@@ -264,7 +253,6 @@ module Formula = struct
 
   (* Reduce formula to cnf *)
   module CnfAlgo = struct
-
     type ctx = {
       mk_new_lit : unit -> Lit.t; (* get a fresh literal *)
       add_clauses : CNF.clause list -> unit; (* declare clauses *)
@@ -315,8 +303,8 @@ module Formula = struct
       @param acc the list of clauses produced so far
       @param pol the polarity of [f]
       @param gensym generator of fresh *)
-    let rec cnf_f ~ctx ~pol acc f = match f, pol with
-      | Not f', _ -> cnf_f ~ctx ~pol:(_neg_pol pol) acc f'
+    let rec cnf ~ctx ~pol acc f = match f, pol with
+      | Not f', _ -> cnf ~ctx ~pol:(_neg_pol pol) acc f'
       (* trivial cases *)
       | True, Plus
       | False, Minus -> acc  (* tautology *)
@@ -328,27 +316,27 @@ module Formula = struct
       | (Or [] | And [] | XOr [] | Equiv []), _ -> assert false
       | And l, Plus
       | Or l, Minus ->
-          List.fold_left (fun acc f' -> cnf_f ~ctx ~pol acc f' ) acc l
+          List.fold_left (fun acc f' -> cnf ~ctx ~pol acc f' ) acc l
       | And (a::l), Minus ->
-          let a' = cnf_f ~ctx ~pol [] a in
-          let l' = List.map (cnf_f ~ctx ~pol []) l in
+          let a' = cnf ~ctx ~pol [] a in
+          let l' = List.map (cnf ~ctx ~pol []) l in
           cnf_list ~ctx acc a' l'
       | Or (a::l), Plus ->
           (* CNF of each sub-formula *)
-          let a' = cnf_f ~ctx ~pol [] a in
-          let l' = List.map (cnf_f ~ctx ~pol []) l in
+          let a' = cnf ~ctx ~pol [] a in
+          let l' = List.map (cnf ~ctx ~pol []) l in
           (* now express the disjunction of those lists of clauses. For each
               list, we can rename it or just use it *)
           cnf_list ~ctx acc a' l'
       (* specials *)
       | Imply (a,b), Plus ->
           cnf_list ~ctx acc
-            (cnf_f ~ctx ~pol:Minus [] a)
-            [cnf_f ~ctx ~pol:Plus [] b]
+            (cnf ~ctx ~pol:Minus [] a)
+            [cnf ~ctx ~pol:Plus [] b]
       | Imply (a,b), Minus ->
           (* not (a=>b) ----->   a and not b *)
-          let acc = cnf_f ~ctx ~pol:Plus acc a in
-          let acc = cnf_f ~ctx ~pol:Minus acc b in
+          let acc = cnf ~ctx ~pol:Plus acc a in
+          let acc = cnf ~ctx ~pol:Minus acc b in
           acc
       | XOr l, _ ->
           (* TODO: efficient version *)
@@ -358,12 +346,12 @@ module Formula = struct
           let f = and_l
             (or_l l :: map_diagonal (fun a b -> or_l [neg a; neg b]) l)
           in
-          cnf_f ~ctx ~pol acc f
+          cnf ~ctx ~pol acc f
       | Equiv l, _ ->
           (* TODO: efficient version *)
           (* right now, it's  (And_{f in l} f) or (And_{f in l} not f) *)
           let f = or_l [ and_l l; and_l (List.map neg l) ] in
-          cnf_f ~ctx ~pol acc f
+          cnf ~ctx ~pol acc f
 
     (* basically, [cartesian_product previous (cnf l)], but smarter. Adds
         its result to [acc] *)
@@ -382,23 +370,62 @@ module Formula = struct
           let x = rename_clauses ~ctx clauses in
           let previous = List.rev_map (fun c' -> x::c') previous in
           cnf_list ~ctx acc previous tail
-
-    (* traverse prenex quantifiers, and convert inner formula into CNF *)
-    let rec traverse ~ctx:ctx f = match f with
-      | Quant (q, lits, f') ->
-          CNF.quantify q lits (traverse ~ctx f')
-      | Form f ->
-          (* CNF of [f], plus a list of new variables to quantify on
-            and side clauses that define those variables *)
-          let clauses = cnf_f ~ctx ~pol:Plus [] f in
-          let clauses' = ctx.get_clauses() in
-          let cnf = CNF.cnf (List.rev_append clauses' clauses) in
-          CNF.exists (ctx.get_newlits ()) cnf
   end
 
   let cnf ?(gensym=Lit.fresh) f =
     let ctx = CnfAlgo.mk_ctx gensym in
-    CnfAlgo.traverse ~ctx f
+    CnfAlgo.cnf ~ctx ~pol:Plus [] f
+end
+
+module QFormula = struct
+  type t =
+    | Quant of quantifier * Lit.t list * t
+    | Prop of Formula.t
+
+  let equal = (=)
+  let compare = Pervasives.compare
+  let hash = Hashtbl.hash
+
+  let quantify q lits f = match lits, f with
+    | [], _ -> f
+    | _, Quant (q', lits', f') when q=q'->
+        Quant (q, List.rev_append lits lits', f')
+    | _ -> Quant (q, lits, f)
+
+  let forall lits f = quantify Forall lits f
+  let exists lits f = quantify Exists lits f
+  let prop f = Prop f
+
+  let rec simplify = function
+    | Quant (q, lits, f) -> Quant (q, lits, simplify f)
+    | Prop f -> Prop (Formula.simplify f)
+
+  let print_with ~pp_lit fmt f =
+    let rec print fmt f = match f with
+      | Quant (q,lits,f') ->
+          Format.fprintf fmt "@[<hov2>%a @[%a@].@ @[%a@]@]" _print_quant q
+            (print_l ~sep:" " pp_lit) lits print f'
+      | Prop f -> Formula.print fmt f
+    in print fmt f
+
+  let print = print_with ~pp_lit:Lit.print
+
+  let cnf ?(gensym=Lit.fresh) f =
+    let module C = Formula.CnfAlgo in
+    let ctx = C.mk_ctx gensym in
+    (* traverse prenex quantifiers, and convert inner formula into CNF *)
+    let rec traverse f = match f with
+      | Quant (q, lits, f') ->
+          QCNF.quantify q lits (traverse f')
+      | Prop f ->
+          (* CNF of [f], plus a list of new variables to quantify on
+            and side clauses that define those variables *)
+          let clauses = C.cnf ~ctx ~pol:Formula.Plus [] f in
+          let clauses' = ctx.C.get_clauses() in
+          let cnf = QCNF.prop (List.rev_append clauses' clauses) in
+          QCNF.exists (ctx.C.get_newlits ()) cnf
+    in
+    traverse f
 end
 
 (** {2 Solvers} *)
@@ -420,7 +447,7 @@ let pp_result fmt = function
 
 type solver = {
   name : string;
-  solve : CNF.t -> result;
+  solve : QCNF.t -> result;
 }
 
 let solve ~solver cnf =
