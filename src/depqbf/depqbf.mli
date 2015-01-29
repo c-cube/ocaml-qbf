@@ -61,6 +61,10 @@ val get_value : t -> var_id -> Qbf.assignment
 val add_var_to_scope : t -> var_id -> nesting -> unit
 
 val add : t -> lit_id -> unit
+(** Add a literal to the current clause or scope *)
+
+val add0 : t -> unit
+(** Add "literal" [0], to close a scope or a clause *)
 
 val sat : t -> Qbf.result
 (** Caution: call {!reset} between two calls to [sat]. Consider

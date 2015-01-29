@@ -120,6 +120,9 @@ let add_var_to_scope =
 
 let add = F.foreign "qdpll_add" C.(t @-> lit @-> returning void)
 
+let add0_ = F.foreign "qdpll_add" C.(t @-> int @-> returning void)
+let add0 t = add0_ t 0
+
 let qdpll_sat = F.foreign "qdpll_sat" C.(t @-> returning int)
 
 let sat s = match qdpll_sat s with
