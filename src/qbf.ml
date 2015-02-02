@@ -141,12 +141,13 @@ module QCNF = struct
 
   let print_with ~pp_lit fmt f =
     let rec _print fmt f = match f with
-      | Prop l -> CNF.print_with ~pp_lit fmt l
+      | Prop l ->
+          Format.fprintf fmt "@[<hov 2>%a@]" (CNF.print_with ~pp_lit) l
       | Quant (q,lits,cnf) ->
-          Format.fprintf fmt "%a @[%a@].@ %a" _print_quant q
+          Format.fprintf fmt "%a @[<hv>%a@].@ %a" _print_quant q
             (print_l ~sep:" " pp_lit) lits _print cnf
     in
-    Format.fprintf fmt "@[<hov2>%a@]" _print f
+    Format.fprintf fmt "%a" _print f
 
   let print = print_with ~pp_lit:Lit.print
 end
@@ -192,9 +193,10 @@ module Formula = struct
     | [_] -> True
     | l -> Equiv l
 
-  let imply a b = match a with
-    | False -> True
-    | True -> b
+  let imply a b = match a, b with
+    | _, True
+    | False, _ -> True
+    | True, _ -> b
     | _ -> Imply (a,b)
 
   let seq_to_list_ seq =
@@ -226,19 +228,22 @@ module Formula = struct
       | Atom a -> pp_lit fmt a
       | True -> Format.pp_print_string fmt "true"
       | False -> Format.pp_print_string fmt "false"
-      | Not f -> Format.fprintf fmt "¬ %a" print_f' f
-      | And l -> Format.fprintf fmt "@[%a@]" (print_l ~sep:" ∧ " print_f') l
-      | Or l -> Format.fprintf fmt "@[%a@]" (print_l ~sep:" v " print_f') l
-      | XOr l -> Format.fprintf fmt "@[Xor %a@]" (print_l ~sep:" " print_f') l
+      | Not f -> Format.fprintf fmt "@[<h>¬%a@]" print_f' f
+      | And l ->
+          Format.fprintf fmt "@[<0>%a@]" (print_l ~sep:" ∧ " print_f') l
+      | Or l ->
+          Format.fprintf fmt "@[<0>%a@]" (print_l ~sep:" v " print_f') l
+      | XOr l -> Format.fprintf fmt "@[<h>Xor %a@]"
+          (print_l ~sep:" " print_f') l
       | Equiv l ->
-          Format.fprintf fmt "@[Equiv %a@]" (print_l ~sep:" " print_f') l
+          Format.fprintf fmt "@[<h>Equiv %a@]" (print_l ~sep:" " print_f') l
       | Imply (a,b) ->
-          Format.fprintf fmt "@[@[%a@] => @[%a@]@]" print_f' a print_f' b
+          Format.fprintf fmt "@[<hov2>%a =>@ %a@]" print_f' a print_f' b
     and print_f' fmt f = match f with
       | Atom _
       | True
       | False -> print fmt f
-      | _ -> Format.fprintf fmt "@[(%a)@]" print f
+      | _ -> Format.fprintf fmt "(%a)" print f
     in print fmt f
 
   let print = print_with ~pp_lit:Lit.print
@@ -424,8 +429,8 @@ module QFormula = struct
   let print_with ~pp_lit fmt f =
     let rec print fmt f = match f with
       | Quant (q,lits,f') ->
-          Format.fprintf fmt "@[<hov2>%a @[%a@].@ @[%a@]@]" _print_quant q
-            (print_l ~sep:" " pp_lit) lits print f'
+          Format.fprintf fmt "@[<hov>%a %a.@ %a@]"
+            _print_quant q (print_l ~sep:" " pp_lit) lits print f'
       | Prop f -> Formula.print fmt f
     in print fmt f
 
