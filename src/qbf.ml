@@ -290,7 +290,7 @@ module Formula = struct
       let clauses = ref [] in
       let newlits = ref [] in
       let mk_new_lit () =
-        let x = Lit.fresh () in
+        let x = gensym() in
         newlits := x :: !newlits;
         x
       in
