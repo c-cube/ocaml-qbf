@@ -138,7 +138,6 @@ module QCNF = struct
   let compare = Pervasives.compare
   let hash = Hashtbl.hash
 
-
   let print_with ~pp_lit fmt f =
     let rec _print fmt f = match f with
       | Prop l ->
@@ -383,7 +382,7 @@ module Formula = struct
         its result to [acc] *)
     and cnf_list ~ctx acc previous l = match l with
       | [] -> List.rev_append previous acc
-      | [] :: _ -> acc (* trivial, so product is trivial *)
+      | [] :: _ -> [] :: acc (* absurd, so product is absurd *)
       | [c] :: tail ->
           (* add [c] to every clause so far *)
           let previous = List.rev_map
@@ -400,7 +399,8 @@ module Formula = struct
 
   let cnf ?(gensym=Lit.fresh) f =
     let ctx = CnfAlgo.mk_ctx gensym in
-    CnfAlgo.cnf ~ctx ~pol:Plus [] f
+    ctx.CnfAlgo.add_clauses (CnfAlgo.cnf ~ctx ~pol:Plus [] f);
+    ctx.CnfAlgo.get_clauses (), ctx.CnfAlgo.get_newlits()
 end
 
 module QFormula = struct
@@ -437,8 +437,6 @@ module QFormula = struct
   let print = print_with ~pp_lit:Lit.print
 
   let cnf ?(gensym=Lit.fresh) f =
-    let module C = Formula.CnfAlgo in
-    let ctx = C.mk_ctx gensym in
     (* traverse prenex quantifiers, and convert inner formula into CNF *)
     let rec traverse f = match f with
       | Quant (q, lits, f') ->
@@ -446,10 +444,9 @@ module QFormula = struct
       | Prop f ->
           (* CNF of [f], plus a list of new variables to quantify on
             and side clauses that define those variables *)
-          let clauses = C.cnf ~ctx ~pol:Formula.Plus [] f in
-          let clauses' = ctx.C.get_clauses() in
-          let cnf = QCNF.prop (List.rev_append clauses' clauses) in
-          QCNF.exists (ctx.C.get_newlits ()) cnf
+          let clauses, new_lits = Formula.cnf ~gensym f in
+          let cnf = QCNF.prop clauses in
+          QCNF.exists new_lits cnf
     in
     traverse f
 end

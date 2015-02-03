@@ -150,10 +150,11 @@ module Formula : sig
   val simplify : t -> t
   (** Simplifications *)
 
-  val cnf : ?gensym:(unit -> Lit.t) -> t -> CNF.t
+  val cnf : ?gensym:(unit -> Lit.t) -> t -> CNF.t * Lit.t list
   (** Convert the formula into a prenex-clausal normal form. This can use
       some Tseitin conversion, introducing new literals, to avoid the
       exponential blowup that can sometimes occur.
+      @return a pair of the CNF, and the list of newly created literals
       @param gensym a way to generate new literals to avoid exponential
         blowup. Default is {!Lit.fresh}. *)
 end
@@ -179,6 +180,8 @@ module QFormula : sig
   (** Simplifications *)
 
   val cnf : ?gensym:(unit -> Lit.t) -> t -> QCNF.t
+  (** Same as {!CNF.cnf}, but newly created literals are quantified
+      in an innermost existential scope *)
 end
 
 (** {2 Solvers} *)
