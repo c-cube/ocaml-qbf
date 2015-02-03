@@ -144,10 +144,10 @@ module QCNF = struct
       | Prop l ->
           Format.fprintf fmt "@[<hov 2>%a@]" (CNF.print_with ~pp_lit) l
       | Quant (q,lits,cnf) ->
-          Format.fprintf fmt "%a @[<hv>%a@].@ %a" _print_quant q
+          Format.fprintf fmt "%a@ @[<hv 0>%a@].@ %a" _print_quant q
             (print_l ~sep:" " pp_lit) lits _print cnf
     in
-    Format.fprintf fmt "%a" _print f
+    _print fmt f
 
   let print = print_with ~pp_lit:Lit.print
 end
