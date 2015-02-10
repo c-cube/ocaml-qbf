@@ -139,4 +139,22 @@ let check s =
 
 let assume = F.foreign "qdpll_assume" C.(t @-> lit @-> returning void)
 
+(* we don't know the size, it's 0-terminated *)
+let qdpll_get_relevant_assumptions =
+  F.foreign "qdpll_get_relevant_assumptions" C.(t @-> returning (ptr int))
+
+let yolo_free = F.foreign "free" C.(ptr int @-> returning void)
+
+let get_relevant_assumptions s =
+  let a = qdpll_get_relevant_assumptions s in
+  (* find the length: last slot is 0 *)
+  let l = ref [] in
+  let i = ref 0 in
+  while C.( !@ (a +@ !i)) <> 0 do
+    l := Qbf.Lit.make C.( !@ (a +@ !i)) :: !l;
+    incr i
+  done;
+  yolo_free a; (* XXX: unsafe, but nothing else would work *)
+  !l
+
 (* TODO: remaining funs *)

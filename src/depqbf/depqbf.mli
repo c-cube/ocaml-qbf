@@ -77,4 +77,9 @@ val check : t -> Qbf.result
 (** Higher-level interface to {!sat} *)
 
 val assume : t -> lit_id -> unit
+(** Add an assumption (assert a lit or its negation) *)
+
+val get_relevant_assumptions : t -> lit_id list
+(** List of assumptions used to prove last UNSAT *)
+
 
