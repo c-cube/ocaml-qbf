@@ -52,7 +52,9 @@ let t = C.view
   ~write:(fun {s} -> s)
   ~read:(fun s ->
     let r = {s} in
+    (*
     Obj.set_tag (Obj.repr r) Obj.no_scan_tag; (* no GC inside *)
+    *)
     Gc.finalise (fun {s} -> qdpll_delete s) r;
     r
   ) (C.ptr qdpll)
