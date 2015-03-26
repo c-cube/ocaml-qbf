@@ -1,6 +1,6 @@
 OASISFormat: 0.4
 Name:        ocaml-qbf
-Version:     0.0.1
+Version:     0.1
 Homepage:    https://github.com/c-cube/ocaml-qbf
 Authors:     Simon Cruanes
 License:     BSD-3-clause

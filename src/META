@@ -1,0 +1,43 @@
+# OASIS_START
+# DO NOT EDIT (digest: 3f1fb3ad150eba91bb0ebb1072dd33a6)
+version = "0.1"
+description = "QBF solving in OCaml, including bindings to solvers"
+archive(byte) = "qbf.cma"
+archive(byte, plugin) = "qbf.cma"
+archive(native) = "qbf.cmxa"
+archive(native, plugin) = "qbf.cmxs"
+exists_if = "qbf.cma"
+package "random" (
+ version = "0.1"
+ description = "QBF solving in OCaml, including bindings to solvers"
+ requires = "qbf random-generator"
+ archive(byte) = "qbf-random.cma"
+ archive(byte, plugin) = "qbf-random.cma"
+ archive(native) = "qbf-random.cmxa"
+ archive(native, plugin) = "qbf-random.cmxs"
+ exists_if = "qbf-random.cma"
+)
+
+package "quantor" (
+ version = "0.1"
+ description = "QBF solving in OCaml, including bindings to solvers"
+ requires = "qbf"
+ archive(byte) = "qbf-quantor.cma"
+ archive(byte, plugin) = "qbf-quantor.cma"
+ archive(native) = "qbf-quantor.cmxa"
+ archive(native, plugin) = "qbf-quantor.cmxs"
+ exists_if = "qbf-quantor.cma"
+)
+
+package "depqbf" (
+ version = "0.1"
+ description = "QBF solving in OCaml, including bindings to solvers"
+ requires = "qbf ctypes ctypes.foreign"
+ archive(byte) = "qbf-depqbf.cma"
+ archive(byte, plugin) = "qbf-depqbf.cma"
+ archive(native) = "qbf-depqbf.cmxa"
+ archive(native, plugin) = "qbf-depqbf.cmxs"
+ exists_if = "qbf-depqbf.cma"
+)
+# OASIS_STOP
+
