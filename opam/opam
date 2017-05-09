@@ -1,0 +1,32 @@
+opam-version: "1.2"
+name: "ocaml-qbf"
+version: "0.1"
+maintainer: "opam-devel@lists.ocaml.org"
+authors: [ "Simon Cruanes" ]
+license: "BSD-3-clause"
+homepage: "https://github.com/c-cube/ocaml-qbf"
+dev-repo: "https://github.com/c-cube/quantor"
+bug-reports: "https://github.com/c-cube/ocaml-qbf/issues"
+tags: [ "clib:quantor" "clib:qdpll"  ]
+build: [
+  ["ocaml" "setup.ml" "-configure" "--prefix" prefix]
+  ["ocaml" "setup.ml" "-build"]
+]
+install: ["ocaml" "setup.ml" "-install"]
+remove: [
+  ["ocamlfind" "remove" "qbf"]
+]
+build-test: [
+  ["ocaml" "setup.ml" "-configure" "--enable-tests"]
+  ["ocaml" "setup.ml" "-build"]
+  ["ocaml" "setup.ml" "-test"]
+]
+build-doc: [ "ocaml" "setup.ml" "-doc" ]
+depends: [
+  "ocamlbuild" {build}
+  "ocamlfind" {build}
+]
+depopts: [
+  "ctypes"
+  "random-generator"
+]
