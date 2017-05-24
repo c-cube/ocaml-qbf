@@ -37,6 +37,7 @@ Library "qbf"
 
 if flag(quantor)
     PostConfCommand:    make deps
+    PostDistcleanCommand: make clean-deps
 
 Library "qbf-quantor"
   Path:                 src/quantor/
