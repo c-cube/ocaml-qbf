@@ -1,5 +1,5 @@
 (* OASIS_START *)
-(* DO NOT EDIT (digest: 450b358fcd87067fc83fc8ff1655b8cb) *)
+(* DO NOT EDIT (digest: cb183b0d2579e61c209a0ec2c4908807) *)
 module OASISGettext = struct
 (* # 22 "src/oasis/OASISGettext.ml" *)
 
@@ -911,15 +911,17 @@ let package_default =
                  S
                    [
                       A "-cclib";
-                      A "-L../libs/quantor-3.2/";
+                      A "-L.";
                       A "-cclib";
-                      A "-lquantor"
+                      A "-lquantor";
+                      A "-cclib";
+                      A "-lpicosat"
                    ])
             ]);
           (["oasis_library_qbf_quantor_cclib"; "ocamlmklib"; "c"],
             [
                (OASISExpr.EBool true,
-                 S [A "-L../libs/quantor-3.2/"; A "-lquantor"])
+                 S [A "-L."; A "-lquantor"; A "-lpicosat"])
             ]);
           (["oasis_library_qbf_depqbf_cclib"; "link"],
             [
@@ -944,6 +946,6 @@ let conf = {MyOCamlbuildFindlib.no_automatic_syntax = false}
 
 let dispatch_default = MyOCamlbuildBase.dispatch_default conf package_default;;
 
-# 948 "myocamlbuild.ml"
+# 950 "myocamlbuild.ml"
 (* OASIS_STOP *)
 Ocamlbuild_plugin.dispatch dispatch_default;;

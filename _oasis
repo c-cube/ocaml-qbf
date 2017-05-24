@@ -42,7 +42,7 @@ Library "qbf-quantor"
   Modules:              Quantor
   CSources:             quantor_stubs.c, quantor_stubs.h
   CCOpt:                -O2 -Wextra -Wno-unused-parameter -I../libs/quantor-3.2/
-  CCLib:                -L../libs/quantor-3.2/ -lquantor
+  CCLib:                -L. -lquantor -lpicosat
   FindlibName:          quantor
   FindlibParent:        qbf
   Build$:               flag(quantor)
@@ -51,7 +51,8 @@ Library "qbf-quantor"
 
 # magiiiic so that '-lquantor' works
 if flag(quantor)
-    PostInstallCommand:     cp libs/quantor-3.2/libquantor.a `ocamlfind query qbf`
+    PreBuildCommand:    mkdir -p _build && cp libs/quantor-3.2/libquantor.a libs/picosat-960/libpicosat.a _build
+    PostInstallCommand: cp libs/quantor-3.2/libquantor.a libs/picosat-960/libpicosat.a `ocamlfind query qbf`
 
 Library "qbf-depqbf"
   Path:                 src/depqbf/
