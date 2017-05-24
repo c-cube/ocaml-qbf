@@ -1,8 +1,8 @@
 
 
 all: picosat-960/config.h quantor-3.2/config.h
-	cd picosat-960/ ; make
-	cd quantor-3.2/ ; make
+	cd picosat-960/ ; make; ranlib libpicosat.a
+	cd quantor-3.2/ ; make; ranlib libquantor.a
 
 # We use the flag -fPIC so that a shared stub can be created on linux.
 # Notes:
