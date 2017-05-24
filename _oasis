@@ -7,6 +7,7 @@ Maintainers: simon.cruanes@inria.fr
 License:     BSD-3-clause
 LicenseFile: LICENSE
 Plugins:     META (0.4), DevFiles (0.4)
+BuildType:   ocamlbuild (0.4)
 BuildTools:  ocamlbuild
 
 Synopsis:   QBF solving in OCaml, including bindings to solvers
@@ -74,6 +75,32 @@ Library "qbf-random"
   Build$:               flag(random)
   Install$:             flag(random)
   BuildDepends:         qbf, random-generator
+
+Executable "test_quantor"
+  Build$:         flag(tests) && flag(quantor)
+  Path:           tests/quantor
+  Install:        false
+  BuildDepends:   qbf, qbf.quantor, oUnit
+  MainIs:         test_quantor.ml
+
+Executable "test_depqbf"
+  Build$:         flag(tests) && flag(depqbf)
+  Path:           tests/depqbf
+  Install:        false
+  BuildDepends:   qbf, qbf.depqbf, oUnit
+  MainIs:         test_depqbf.ml
+
+Test test_depqbf
+  Run$:           flag(tests) && flag(depqbf)
+  Command:        $test_depqbf
+  TestTools:      test_depqbf
+  WorkingDirectory: .
+
+Test test_quantor
+  Run$:           flag(tests) && flag(quantor)
+  Command:        $test_quantor
+  TestTools:      test_quantor
+  WorkingDirectory: .
 
 Document qbf
   Title:                Qbf docs

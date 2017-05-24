@@ -7,7 +7,7 @@ let add_clause s l =
   List.iter (fun x -> D.add s (mk x)) l;
   D.add0 s
 
-let () =
+let test_depqbf3 _ =
   let s = D.create () in
   D.configure s "--incremental-use";
   let level1 = D.new_scope s Qbf.Forall in

@@ -3,7 +3,11 @@ module D = Depqbf
 
 let mk = Qbf.Lit.make
 
-let () =
+let add_clause s l =
+  List.iter (fun x -> D.add s (mk x)) l;
+  D.add0 s
+
+let test_depqbf2 _ =
   let s = D.create () in
   let level1 = D.new_scope s Qbf.Forall in
   D.add s (mk 1);
@@ -14,4 +18,10 @@ let () =
   D.add s (mk 5);
   D.add0 s;
   D.add_var_to_scope s (mk 3) level1;
+  D.gc s;
+  add_clause s [1;2;3];
+  add_clause s [1;-2;3];
+  add_clause s [-3];
+  let res = D.check s in
+  Format.eprintf "(res: %a)@?" Qbf.pp_result res;
   ()

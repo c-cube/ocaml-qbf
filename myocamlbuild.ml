@@ -1,5 +1,5 @@
 (* OASIS_START *)
-(* DO NOT EDIT (digest: cb183b0d2579e61c209a0ec2c4908807) *)
+(* DO NOT EDIT (digest: 20db17568fe48367d23ee78777635427) *)
 module OASISGettext = struct
 (* # 22 "src/oasis/OASISGettext.ml" *)
 
@@ -935,6 +935,8 @@ let package_default =
        ];
      includes =
        [
+          ("tests/quantor", ["src"; "src/quantor"]);
+          ("tests/depqbf", ["src"; "src/depqbf"]);
           ("src/random", ["src"]);
           ("src/quantor", ["src"]);
           ("src/depqbf", ["src"])
@@ -946,6 +948,6 @@ let conf = {MyOCamlbuildFindlib.no_automatic_syntax = false}
 
 let dispatch_default = MyOCamlbuildBase.dispatch_default conf package_default;;
 
-# 950 "myocamlbuild.ml"
+# 952 "myocamlbuild.ml"
 (* OASIS_STOP *)
 Ocamlbuild_plugin.dispatch dispatch_default;;
