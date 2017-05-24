@@ -3,6 +3,16 @@
 Library to deal with [Quantified Boolean Formulas](https://en.wikipedia.org/wiki/True_quantified_Boolean_formula)
 in OCaml.
 
+
+|        Linux, MacOS        |      Windows       |
+| :------------------------: | :----------------: |
+| [![Linux and MacOS][1]][2] | [![Windows][3]][4] |
+
+[1]: https://travis-ci.org/maelvalais/ocaml-qbf.svg?branch=master
+[2]: https://travis-ci.org/maelvalais/ocaml-qbf
+[3]: https://ci.appveyor.com/api/projects/status/d5cjdyqalnlaqxb5?svg=true
+[4]: https://ci.appveyor.com/project/maelvalais/ocaml-qbf
+
 ## Organization
 
 - The main library, `qbf`, contains types and functions to deal with
