@@ -259,7 +259,7 @@ if [ "$CFLAGS" = "" ]
 then
   case $RAWCC in
     gcc)
-      CFLAGS="-Wall -W -fPIC"
+      CFLAGS="-Wall -W"
       if [ $debug = yes ]
       then
         CFLAGS="$CFLAGS -g"
@@ -684,7 +684,7 @@ echo "#define QUANTOR_LIT_ALIGNMENT_IS_ZERO" >> config.h
 
 cto () {
   printf '"%-20s' $1 >> config.h
-  echo "$2"'\\n" \' >> config.h
+  echo "$2"'\\n" @SLASH@' >> config.h
 }
 
 echo "#define QUANTOR_COMPILE_TIME_OPTIONS \\" >> config.h
@@ -719,6 +719,7 @@ cto "fastalloc" "$fastalloc"
 echo '""' >> config.h
 
 echo "#endif" >> config.h
+sed -i -e 's,@SLASH@,\\,' config.h
 echo " done"
 #*------------------------------------------------------------------------*#
 printf "$fmt" "cleaning up"

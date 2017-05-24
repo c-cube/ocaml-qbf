@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2003 - 2007 Armin Biere, ETH Zurich, JKU Linz.
+Copyright (c) 2003 - 2014 Armin Biere, ETH Zurich, JKU Linz.
 
 All rights reserved. Redistribution and use in source and binary forms, with
 or without modification, are permitted provided that the following
@@ -46,7 +46,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h>
 
 /*------------------------------------------------------------------------*/
-#ifdef QBF_EVALUATION_FORMAT
+#ifdef QUANTOR_QBF_EVALUATION_FORMAT
 /*------------------------------------------------------------------------*/
 
 static char *my_argv[5];
@@ -70,7 +70,7 @@ checkapi (FILE * dummy_file, int dummy_test_case_number)
 int
 main (int argc, char **argv)
 {
-#ifdef QBF_EVALUATION_FORMAT
+#ifdef QUANTOR_QBF_EVALUATION_FORMAT
   double time_limit;
   if (argc != 3)
     {

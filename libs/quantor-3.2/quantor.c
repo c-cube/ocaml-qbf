@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2003 - 2007 Armin Biere, ETH Zurich, JKU Linz.
+Copyright (c) 2003 - 2014 Armin Biere, ETH Zurich, JKU Linz.
 
 All rights reserved. Redistribution and use in source and binary forms, with
 or without modification, are permitted provided that the following
@@ -35,10 +35,10 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #define QUANTOR_COPYRIGHT \
-"Copyright (c) 2003 - 2007 Armin Biere, ETH Zurich, JKU Linz."
+"Copyright (c) 2003 - 2014 Armin Biere, ETH Zurich, JKU Linz."
 
 #define QUANTOR_ID \
-"$Id: quantor.c,v 1.477 2007-06-22 08:39:02 biere Exp $"
+"$<still-need-to-extract-git-id>$"
 
 /*------------------------------------------------------------------------*/
 
@@ -368,7 +368,7 @@ struct Chunk
   ChunkData data;
 };
 
-#define CHUNK_DATA_OFFSET ((int)&((Chunk*)0)->data)
+#define CHUNK_DATA_OFFSET ((long)&((Chunk*)0)->data)
 
 /*------------------------------------------------------------------------*/
 #endif /* QUANTOR_FAST_ALLOC */
@@ -2049,14 +2049,18 @@ push_new_rhs (Quantor * quantor, Clause * clause, Lit * lhs)
 {
   unsigned src, size;
   Lit *lit, **res;
+#ifndef NDEBUG
   int found_lhs;
+#endif
 
   reset_PtrStack (quantor, &quantor->new_rhs, 0);
 
   assert (clause->size >= 3);
 
   src = 0;
+#ifndef NDEBUG
   found_lhs = 0;
+#endif
   size = 0;
 
   while (src < clause->size)
@@ -2064,7 +2068,9 @@ push_new_rhs (Quantor * quantor, Clause * clause, Lit * lhs)
       lit = clause->row[src++].lit;
       if (lit == QUANTOR_NOT (lhs))
 	{
+#ifndef NDEBUG
 	  found_lhs = 1;
+#endif
 	  continue;
 	}
 
@@ -4762,6 +4768,7 @@ remove_from_order (Quantor * quantor, PtrStack * order, Var * v)
     }
   tmp = pop_PtrStack (quantor, order);
   assert (tmp == v);
+  (void) tmp;
   v->rank = -1;
 
   if (pos < last)
@@ -4841,6 +4848,7 @@ register_zombie (Quantor * quantor, Var * v)
 	unregister_unate (quantor, v);
 
       scope = v->scope;
+      (void) scope;
       remove_from_scope (quantor, v);
       delete_Var (quantor, v, 0);
     }
@@ -4923,6 +4931,7 @@ remove_Cell (Quantor * quantor, Cell * cell)
 
   clause = cell->clause;
   assert (clause->state == QUANTOR_GARBAGE_CLAUSE);
+  (void) clause;
 
   v = lit->var;
 
@@ -5105,6 +5114,7 @@ simplify_new_clause (Quantor * quantor)
   count = 0;
   trivial = 0;
   q = quantor->new_clause.start;
+  (void) trivial;
 
   for (p = quantor->new_clause.start; p < quantor->new_clause.top; p++)
     {
@@ -5776,6 +5786,7 @@ eq_Clause (Quantor * quantor, Clause * a, Clause * b)
   int res;
 
   (void) quantor;
+  (void) beor;
   res = 0;
 
   if (a->size == b->size)
@@ -6259,6 +6270,7 @@ external_hyper1res_pivot_is_unit (Quantor * quantor,
 
   eor = end_of_row (clause);
   skipped = 0;
+  (void) skipped;
 
   for (p = clause->row; p < eor; p++)
     {
@@ -6553,6 +6565,7 @@ self_subsuming_hyper1res_pivot_is_unit (Quantor * quantor,
   Lit *lit;
 
   found_pivot = 0;
+  (void) found_pivot;
 
   eor = end_of_row (clause);
   for (p = clause->row; p < eor; p++)
@@ -7835,6 +7848,7 @@ clause_is_part_of_function (Quantor * quantor, Lit * lhs, Clause * clause)
 
   found_lhs = 0;
   eor = end_of_row (clause);
+  (void) found_lhs;
 
   for (p = clause->row; p < eor; p++)
     {
@@ -8321,6 +8335,7 @@ resolve_unit_or_unate (Quantor * quantor, Var * v)
   int saved_is_unit;
 
   saved_is_unit = is_unit (quantor, v);
+  (void) saved_is_unit;
 
   if (is_unit (quantor, v))
     {
@@ -8486,6 +8501,7 @@ substitute_clause (Quantor * quantor, Clause * clause, Lit * lhs, Lit * rhs)
   eor = end_of_row (clause);
 
   found = 0;
+  (void) found;
   for (p = clause->row; p < eor; p++)
     {
       lit = p->lit;
@@ -9680,6 +9696,7 @@ reorder_var (Quantor * quantor, Var * v)
 
   old_score = v->score;
   scope = v->scope;
+  (void) old_score;
 
   assert (scope);
   assert (is_linked (&scope->reorder.first, v, &v->reorder_link));
@@ -9702,6 +9719,7 @@ reorder_var (Quantor * quantor, Var * v)
 #endif
 
   old_order = v->rank;
+  (void) old_order;
   fix_order (quantor, &scope->order, v->rank);
 
 #ifdef QUANTOR_LOG8
@@ -10206,6 +10224,7 @@ mark_clauses_of_substituted_function (Quantor * quantor,
   clause->part_of_substituted_function = new_mark;
 
   found_lhs = 0;
+  (void) found_lhs;
   eor = end_of_row (clause);
   for (p = clause->row; p < eor; p++)
     {
@@ -10407,6 +10426,7 @@ forall_clause (Quantor * quantor, Clause * clause, Var * v)
 	}
 
       added_clause = add_new_clause (quantor, "FORALL");
+      (void) added_clause;
 #ifndef NDEBUG
       count += added_clause ? added_clause->size : 0;
 #endif
@@ -12164,6 +12184,16 @@ SatSolverNanosat_get_api (void)
 
 /*------------------------------------------------------------------------*/
 
+typedef struct SatSolverPicosat SatSolverPicosat;
+
+struct SatSolverPicosat
+{
+  SatSolver super;
+  PicoSAT *picosat;
+};
+
+/*------------------------------------------------------------------------*/
+
 static SatSolverAPI *SatSolverPicosat_get_api (void);
 
 /*------------------------------------------------------------------------*/
@@ -12171,29 +12201,25 @@ static SatSolverAPI *SatSolverPicosat_get_api (void);
 static SatSolver *
 SatSolverPicosat_new (Quantor * quantor)
 {
-  SatSolver *solver;
+  SatSolverPicosat *this;
 
-  solver = new (quantor, sizeof (*solver));
-  SatSolver_init (quantor, solver, SatSolverPicosat_get_api ());
+  this = new (quantor, sizeof (*this));
+  SatSolver_init (quantor, &this->super, SatSolverPicosat_get_api ());
 
   if (quantor->opts.verbose >= 2)
-    fprintf (quantor->io.out,
-	     "c PicoSAT Version %s\n"
-	     "c %s\n",
-	     picosat_version (),
-	     picosat_id ());
+    fprintf (quantor->io.out, "c PicoSAT Version %s\n", picosat_version ());
 
-  picosat_init ();
+  this->picosat = picosat_init ();
 
-  picosat_set_output (quantor->io.out);
+  picosat_set_output (this->picosat, quantor->io.out);
   if (quantor->opts.verbose >= 2)
-    picosat_enable_verbosity ();
+    picosat_set_verbosity (this->picosat, 1);
 
   /* TODO: time limit for picosat */
 
   /* TODO: space limit for picosat */
 
-  return solver;
+  return &this->super;
 }
 
 /*------------------------------------------------------------------------*/
@@ -12202,22 +12228,23 @@ static void
 SatSolverPicosat_delete (SatSolver * solver)
 {
   Quantor *quantor = solver->quantor;
+  SatSolverPicosat * this = (SatSolverPicosat*) solver;
 #ifdef QUANTOR_STATS1
   size_t bytes;
 #endif
   if (quantor->opts.verbose)
-    picosat_stats ();
+    picosat_stats (this->picosat);
 
 #ifdef QUANTOR_STATS1
-  quantor->stats.sat_solver_time += picosat_seconds ();
+  quantor->stats.sat_solver_time += picosat_seconds (this->picosat);
 
-  bytes = picosat_max_bytes_allocated ();
+  bytes = picosat_max_bytes_allocated (this->picosat);
   if (bytes > quantor->stats.sat_solver_bytes)
     quantor->stats.sat_solver_bytes = bytes;
 #endif
-  picosat_reset ();
+  picosat_reset (this->picosat);
   SatSolver_release (solver);
-  delete (quantor, solver, sizeof (*solver));
+  delete (quantor, this, sizeof (*this));
 }
 
 /*------------------------------------------------------------------------*/
@@ -12225,8 +12252,8 @@ SatSolverPicosat_delete (SatSolver * solver)
 static int
 SatSolverPicosat_add (SatSolver * solver, int lit)
 {
-  (void) solver;
-  picosat_add (lit);
+  SatSolverPicosat * this = (SatSolverPicosat*) solver;
+  picosat_add (this->picosat, lit);
   return 1;
 }
 
@@ -12235,11 +12262,12 @@ SatSolverPicosat_add (SatSolver * solver, int lit)
 static QuantorResult
 SatSolverPicosat_run (SatSolver * solver)
 {
+  SatSolverPicosat * this = (SatSolverPicosat*) solver;
   QuantorResult res;
   int picosat_res;
 
   (void) solver;
-  picosat_res = picosat_sat (-1);
+  picosat_res = picosat_sat (this->picosat, -1);
 
   switch (picosat_res)
     {
@@ -12262,6 +12290,7 @@ SatSolverPicosat_run (SatSolver * solver)
 static void
 SatSolverPicosat_assignment (SatSolver * solver)
 {
+  SatSolverPicosat * this = (SatSolverPicosat*) solver;
   int pidx, tmp;
 
   SatSolver_init_assignment (solver);
@@ -12270,7 +12299,7 @@ SatSolverPicosat_assignment (SatSolver * solver)
   for (pidx = 1; pidx <= solver->max_pidx; pidx++)
     {
       assert (solver->assignment.start[pidx] == QUANTOR_UNASSIGNED);
-      tmp = picosat_deref (pidx);
+      tmp = picosat_deref (this->picosat, pidx);
       solver->assignment.start[pidx] = tmp > 0 ? QUANTOR_TRUE : QUANTOR_FALSE;
     }
   solver->assignment_initialized = 1;
@@ -14233,7 +14262,7 @@ int
 quantor_main (int argc, char **argv)
 {
   int pretty_print_only, dump_sat, quit_after_simplification;
-  int do_not_print_assignment;
+  int do_not_print_assignment, stats_printed;
   int i, err, done, fast_exit;
   SatSolverAPI **sat_api_ptr;
   const char *err_str;
@@ -14515,6 +14544,7 @@ quantor_main (int argc, char **argv)
   quantor_setup (quantor);
 
   res = QUANTOR_RESULT_UNKNOWN;
+  stats_printed = 0;
 
   if (!done && !err)
     {
@@ -14544,12 +14574,18 @@ quantor_main (int argc, char **argv)
 	  else if (!quit_after_simplification)
 	    {
 	      res = quantor_sat_after_simplification (quantor, res);
+	      if (!done && !err) 
+		{
+		  quantor_stats (quantor, quantor->io.out);
+		  stats_printed = 1;
+		}
+
 	      quantor_print_solution (quantor, res, !do_not_print_assignment);
 	    }
 	}
     }
 
-  if (!done && !err)
+  if (!done && !err && !stats_printed)
     quantor_stats (quantor, quantor->io.out);
 
   if (!fast_exit)
