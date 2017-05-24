@@ -21,7 +21,7 @@ Description:
 
 Flag "quantor"
   Description:          build and install the binding "qbf.quantor"
-  Default:              false
+  Default:              true
 
 Flag "random"
   Description:          build and install random generators (depends on "random-generator")
