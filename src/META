@@ -1,6 +1,6 @@
 # OASIS_START
-# DO NOT EDIT (digest: 3f1fb3ad150eba91bb0ebb1072dd33a6)
-version = "0.1"
+# DO NOT EDIT (digest: adbc90750f90c0e6c9fa21d576ad0c96)
+version = "0.2"
 description = "QBF solving in OCaml, including bindings to solvers"
 archive(byte) = "qbf.cma"
 archive(byte, plugin) = "qbf.cma"
@@ -8,7 +8,7 @@ archive(native) = "qbf.cmxa"
 archive(native, plugin) = "qbf.cmxs"
 exists_if = "qbf.cma"
 package "random" (
- version = "0.1"
+ version = "0.2"
  description = "QBF solving in OCaml, including bindings to solvers"
  requires = "qbf random-generator"
  archive(byte) = "qbf-random.cma"
@@ -19,7 +19,7 @@ package "random" (
 )
 
 package "quantor" (
- version = "0.1"
+ version = "0.2"
  description = "QBF solving in OCaml, including bindings to solvers"
  requires = "qbf"
  archive(byte) = "qbf-quantor.cma"
@@ -30,7 +30,7 @@ package "quantor" (
 )
 
 package "depqbf" (
- version = "0.1"
+ version = "0.2"
  description = "QBF solving in OCaml, including bindings to solvers"
  requires = "qbf ctypes ctypes.foreign"
  archive(byte) = "qbf-depqbf.cma"
