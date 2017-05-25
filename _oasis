@@ -76,12 +76,16 @@ Library "qbf-random"
   Install$:             flag(random)
   BuildDepends:         qbf, random-generator
 
+# Because we generally run the tests without installing the qbf.quantor library,
+# we must make sure we do not use the shared dllqbf-quantor_stub.so; to force
+# the use of the static libqbf-quantor_stub.a, we just pass 'Custom: true'.
 Executable "test_quantor"
   Build$:         flag(tests) && flag(quantor)
   Path:           tests/quantor
   Install:        false
   BuildDepends:   qbf, qbf.quantor, oUnit
   MainIs:         test_quantor.ml
+  Custom:         true
 
 Executable "test_depqbf"
   Build$:         flag(tests) && flag(depqbf)
@@ -89,6 +93,7 @@ Executable "test_depqbf"
   Install:        false
   BuildDepends:   qbf, qbf.depqbf, oUnit
   MainIs:         test_depqbf.ml
+  Custom:         true
 
 Test test_depqbf
   Run$:           flag(tests) && flag(depqbf)

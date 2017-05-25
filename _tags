@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: 2a03bf632eb90334056031e5984d8e74)
+# DO NOT EDIT (digest: d228ec894c64736ac34c94be190fde1c)
 # Ignore VCS directories, you can use the same kind of rule outside
 # OASIS_START/STOP if you want to exclude directories that contains
 # useless stuff for the build process
@@ -45,6 +45,7 @@ true: annot, bin_annot
 <tests/quantor/*.ml{,i,y}>: pkg_oUnit
 <tests/quantor/*.ml{,i,y}>: use_qbf
 <tests/quantor/*.ml{,i,y}>: use_qbf-quantor
+"tests/quantor/test_quantor.byte": custom
 # Executable test_depqbf
 "tests/depqbf/test_depqbf.byte": pkg_ctypes
 "tests/depqbf/test_depqbf.byte": pkg_ctypes.foreign
@@ -56,6 +57,7 @@ true: annot, bin_annot
 <tests/depqbf/*.ml{,i,y}>: pkg_oUnit
 <tests/depqbf/*.ml{,i,y}>: use_qbf
 <tests/depqbf/*.ml{,i,y}>: use_qbf-depqbf
+"tests/depqbf/test_depqbf.byte": custom
 # OASIS_STOP
 <libs>: not_hygienic
 <tests>: not_hygienic
