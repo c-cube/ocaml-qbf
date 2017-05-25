@@ -223,8 +223,7 @@ RAWCC=unknown
 for cc in $CC 
 do
   case $cc in
-    gcc* | cc*) RAWCC=$cc; break;;
-    *gcc | *cc) RAWCC=$cc; break;;
+    *gcc* | *cc*) RAWCC=$cc; break;;
     *) ;;
   esac
 done
