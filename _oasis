@@ -95,5 +95,5 @@ Document "qbf-quantor"
 
 SourceRepository head
   Type: git
-  Location: https://github.com/c-cube/quantor
-  Browser: https://github.com/c-cube/quantor/tree/master/src
+  Location: https://github.com/c-cube/quantor.git
+  Browser: https://github.com/c-cube/quantor
