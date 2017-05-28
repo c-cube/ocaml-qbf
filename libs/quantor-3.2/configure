@@ -396,23 +396,25 @@ cat <<EOF >$tmp/getword.c
 int main (void)
 {
   if (sizeof(unsigned) == sizeof(void*))
-    printf ("unsigned\n");
+    printf ("unsigned");
   else if (sizeof(unsigned long) == sizeof(void*))
-    printf ("unsigned long\n");
+    printf ("unsigned long");
   else
-    printf ("invalid\n");
+    printf ("invalid");
   return 0;
 }
 EOF
 $RAWCC $RAWCFLAGS -o $tmp/getword $tmp/getword.c
 WORD="`$tmp/getword`"
-if [ "$WORD" = invalid ]
-then
-  echo
-  die "could not get word size"
-fi
-else
-WORD=unsigned
+case "$WORD" in
+  *invalid*)
+    echo
+    die "could not get word size"
+    ;;
+  *)
+    WORD=unsigned
+    ;;
+esac
 fi
 echo " $WORD"
 #*------------------------------------------------------------------------*#
@@ -439,9 +441,9 @@ then
 int main (void)
 {
   if (sizeof (unsigned long) == 8)
-    printf ("unsigned long\n");
+    printf ("unsigned long");
   else
-    printf ("invalid\n");
+    printf ("invalid");
   return 0;
 }
 EOF
@@ -454,9 +456,9 @@ EOF
 int main (void)
 {
   if (sizeof (unsigned long long) == 8)
-    printf ("unsigned long long\n");
+    printf ("unsigned long long");
   else
-    printf ("invalid\n");
+    printf ("invalid");
 }
 EOF
     if $RAWCC $RAWCFLAGS -o $tmp/getsignature $tmp/getsignature.c \
@@ -499,7 +501,7 @@ then
 int main (void)
 {
   if (sizeof(long) == 2 * sizeof(int))
-    printf ("long\n");
+    printf ("long");
   return 0;
 }
 EOF
@@ -514,7 +516,7 @@ EOF
 int main (void)
 {
   if (sizeof(long long) == 2 * sizeof(int))
-    printf ("long long\n");
+    printf ("long long");
   return 0;
 }
 EOF
@@ -587,7 +589,7 @@ main (void)
   for (alignment = 0; alignment <= 64; alignment++)
     if (is_power_of_two (base + alignment))
       {
-	printf ("%d\n", alignment);
+	printf ("%d", alignment);
 	exit (0);
       }
 

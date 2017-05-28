@@ -36,10 +36,6 @@ Library "qbf"
   Path:                 src/
   Modules:              Qbf
 
-if flag(quantor)
-    PostConfCommand:    make deps
-    PostDistcleanCommand: make clean-deps
-
 Library "qbf-quantor"
   Path:                 src/quantor/
   Modules:              Quantor
@@ -54,8 +50,9 @@ Library "qbf-quantor"
 
 # magiiiic so that '-lquantor' works
 if flag(quantor)
-    PreBuildCommand:    mkdir -p _build && cp libs/quantor-3.2/libquantor.a libs/picosat-960/libpicosat.a _build
-    PostInstallCommand: cp libs/quantor-3.2/libquantor.a libs/picosat-960/libpicosat.a `ocamlfind query qbf`
+    PreBuildCommand:    make deps
+    PostCleanCommand:   make clean-deps
+    PostInstallCommand: make install-deps
 
 Library "qbf-depqbf"
   Path:                 src/depqbf/
