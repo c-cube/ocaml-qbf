@@ -24,6 +24,20 @@ in OCaml.
   the library for convenience (they are rarely packaged on distributions, and
   require some compilation options such as `-fPIC` to work with OCaml).
 
+## Tested configurations
+
+It works with any version of OCaml from 3.12.1 to 4.04.0 onwards.
+
+1. tested on linux (Ubuntu 16.04, x86_64),
+2. tested on MacOS,
+3. on windows, the cross-compilation to native win32 under cygwin works fine
+   using the mingw64-i686 cross-compiler. It does not work with the x86_64
+   compiler[^1]. Should also work under windows-bash for windows 10.
+
+[^1]: This is a bug in quantor's `./configure`. When testing the size of a
+      word, windows uses `unsigned long long` but this option is not
+      checked (only `unsigned long` and `unsigned`).
+
 ## License
 
 The library and its dependencies are licensed under the BSD license
