@@ -1,15 +1,13 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
-ROOT=`dirname $0`
-cd "$ROOT"
-
-for i in test_*.ml ; do
-    echo -n "testing $i... "
-    ocamlfind opt -package qbf.quantor -package qbf.depqbf -linkpkg "./$i" -o test.exe
-    ./test.exe
-    if [ -z $? ]; then
-        echo "failed!";
+ok=0; nok=0;
+for p in test_*; do
+    if ./$p; then
+        printf "%20s OK\n" $p; ok=$(expr $ok + 1)
     else
-        echo "success!";
+        printf "%30s NOK\n" $p; nok=$(expr $nok + 1)
     fi
 done
+echo "Passed: $ok"
+echo "Failed: $nok"
+test $nok -eq 0

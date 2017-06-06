@@ -7,3 +7,4 @@ B _build/src/quantor
 B _build/src/random
 B _build/src/depqbf
 PKG ctypes
+PKG oUnit

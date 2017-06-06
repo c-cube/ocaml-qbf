@@ -42,8 +42,15 @@ configure:
 
 deps:
 	cd libs ; make
+	mkdir -p _build
+	cp libs/quantor*/libquantor.a libs/picosat*/libpicosat.a _build
+
 
 clean-deps:
 	cd libs ; make clean
+
+install-deps:
+	cp libs/quantor*/libquantor.a $$(ocamlfind query qbf)
+	cp libs/picosat*/libpicosat.a $$(ocamlfind query qbf)
 
 .PHONY: deps
