@@ -124,5 +124,5 @@ Document "qbf-quantor"
 
 SourceRepository head
   Type: git
-  Location: https://github.com/c-cube/quantor.git
-  Browser: https://github.com/c-cube/quantor
+  Location: https://github.com/c-cube/ocaml-qbf.git
+  Browser: https://github.com/c-cube/ocaml-qbf

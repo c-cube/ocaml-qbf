@@ -5,7 +5,7 @@ maintainer: "Simon Cruanes <simon.cruanes@inria.fr>"
 authors: [ "Simon Cruanes" ]
 license: "BSD-3-clause"
 homepage: "https://github.com/c-cube/ocaml-qbf"
-dev-repo: "https://github.com/c-cube/quantor.git"
+dev-repo: "https://github.com/c-cube/ocaml-qbf.git"
 bug-reports: "https://github.com/c-cube/ocaml-qbf/issues"
 tags: [ "clib:quantor" "clib:qdpll" "clib:picosat"  ]
 build: [
