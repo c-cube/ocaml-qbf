@@ -1,7 +1,7 @@
 opam-version: "1.2"
 name: "qbf"
 version: "0.2"
-maintainer: "simon.cruanes@inria.fr"
+maintainer: "Simon Cruanes <simon.cruanes@inria.fr>"
 authors: [ "Simon Cruanes" ]
 license: "BSD-3-clause"
 homepage: "https://github.com/c-cube/ocaml-qbf"
