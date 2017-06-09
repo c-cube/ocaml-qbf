@@ -14,7 +14,7 @@ $(PICO)/config.h:
 # (as well as static lib). The shared lib need position-independent code.
 $(PICO)/libpicosat.a: $(PICO)/config.h
 	cd $(dir $@);\
-	make CFLAGS="-fPIC $$(grep CFLAGS= Makefile | cut -d= -f2)" libpicosat.a;\
+	make CFLAGS="-fPIC $$(grep CFLAGS= makefile | cut -d= -f2)" libpicosat.a;\
 	ranlib libpicosat.a
 $(QUANT)/libquantor.a: $(QUANT)/config.h
 	cd $(dir $@);\
