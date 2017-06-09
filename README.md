@@ -8,10 +8,11 @@ in OCaml.
 | :------------------------: | :----------------: |
 | [![Linux and MacOS][1]][2] | [![Windows][3]][4] |
 
-[1]: https://travis-ci.org/maelvalais/ocaml-qbf.svg?branch=master
-[2]: https://travis-ci.org/maelvalais/ocaml-qbf
-[3]: https://ci.appveyor.com/api/projects/status/d5cjdyqalnlaqxb5?svg=true
-[4]: https://ci.appveyor.com/project/maelvalais/ocaml-qbf
+[1]: https://travis-ci.org/c-cube/ocaml-qbf.svg?branch=master
+[2]: https://travis-ci.org/c-cube/ocaml-qbf
+[3]: https://ci.appveyor.com/api/projects/status/github/c-cube/ocaml-qbf?svg=true
+[4]: https://ci.appveyor.com/project/c-cube/ocaml-qbf
+
 
 ## Organization
 
@@ -45,4 +46,12 @@ The library and its dependencies are licensed under the BSD license
 
 ## Installation
 
-Please use opam (after the first release is done).
+Using opam:
+
+    opam install qbf
+
+From source:
+
+    ./configure
+    make
+    make install
