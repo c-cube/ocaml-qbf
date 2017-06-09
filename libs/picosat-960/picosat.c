@@ -8098,7 +8098,7 @@ picosat_stats (PS * ps)
 #ifndef NGETRUSAGE
 #include <sys/time.h>
 #include <sys/resource.h>
-#include <sys/unistd.h>
+//#include <sys/unistd.h> // How is this include useful?
 #endif
 
 double
