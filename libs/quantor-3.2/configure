@@ -411,10 +411,9 @@ case "$WORD" in
     echo
     die "could not get word size"
     ;;
-  *)
-    WORD=unsigned
-    ;;
 esac
+else
+WORD=unsigned
 fi
 echo " $WORD"
 #*------------------------------------------------------------------------*#
