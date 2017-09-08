@@ -55,3 +55,12 @@ From source:
     ./configure
     make
     make install
+
+## Known issues
+
+* `process killed by signal -5` is due to a dlopen problem: the binary has been
+  linked against the shared library `dllqbf-quantor_stubs.so` but this shared
+  lib isn't installed yet.
+* `process killed by signal -10` is still unknown. It was happening in
+  travis-ci. My workaround was to remove the travis-ci cache (~/.opam was
+  cached between two builds).
