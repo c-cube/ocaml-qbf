@@ -10,6 +10,7 @@ let add_clause s l =
 let test_depqbf3 _ =
   let s = D.create () in
   D.configure s "--incremental-use";
+  D.configure s "--dep-man=simple";
   let level1 = D.new_scope s Qbf.Forall in
   D.add s (mk 1);
   D.add s (mk 2);
