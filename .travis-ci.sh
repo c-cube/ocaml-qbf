@@ -14,15 +14,15 @@ case "$TRAVIS_OS_NAME" in
   ;;
   osx)
     brew update > /dev/null
-    brew install opam # 'gmp' and 'coreutils' are already installed on travis
+    brew install opam libffi depqbf # 'gmp' and 'coreutils' are already installed on travis
   ;;
 esac
 
 opam init -y
 eval `opam config env`
-opam install -y ocamlfind ounit
+opam install -y ocamlfind ounit ctypes ctypes-foreign
 
-./configure --enable-quantor --enable-tests
+./configure --enable-quantor --enable-tests --enable-depqbf
 make
 make test
 
