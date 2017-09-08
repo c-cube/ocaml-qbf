@@ -7,7 +7,7 @@ license: "BSD-3-clause"
 homepage: "https://github.com/c-cube/ocaml-qbf"
 dev-repo: "https://github.com/c-cube/ocaml-qbf.git"
 bug-reports: "https://github.com/c-cube/ocaml-qbf/issues"
-tags: [ "clib:quantor" "clib:qdpll" "clib:picosat"  ]
+tags: [ "clib:quantor" "clib:picosat"  ]
 build: [
   ["ocaml" "setup.ml" "-configure" "--prefix" prefix]
   ["ocaml" "setup.ml" "-build"]
