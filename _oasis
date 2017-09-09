@@ -60,9 +60,12 @@ Library "qbf-depqbf"
   BuildDepends:         qbf, ctypes, ctypes.foreign
   FindlibName:          depqbf
   FindlibParent:        qbf
-  CCLib:                "-force_load /usr/local/lib/libqdpll.a"
   Build$:               flag(depqbf)
   Install$:             flag(depqbf)
+  if system(macosx)
+    CCLib:              -force_load /usr/local/lib/libqdpll.a
+  else
+    CCLib:              -L/usr/local/lib -lqdpll
 
 Library "qbf-random"
   Path:                 src/random/
