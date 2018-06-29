@@ -39,7 +39,7 @@ compsatdir=""
 booleforcedir=""
 picosatdir=""
 #*------------------------------------------------------------------------*#
-tmp=/tmp/quantor-configure-$$
+tmp=quantor-configure-$$
 mkdir $tmp || exit 1
 trap "rm -rf $tmp" 2
 #*------------------------------------------------------------------------*#
