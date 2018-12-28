@@ -64,3 +64,10 @@ From source:
 * `process killed by signal -10` is still unknown. It was happening in
   travis-ci. My workaround was to remove the travis-ci cache (~/.opam was
   cached between two builds).
+
+## Changelog
+
+### 0.3 (2018-12-28)
+
+- fix building ocaml-qbf using opam 2. Opam 2 is sandboxing builds and
+  do not accept messing with /tmp
