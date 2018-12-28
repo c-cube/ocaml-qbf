@@ -32,3 +32,9 @@ setup.data
 setup.log
 
 # End of https://www.gitignore.io/api/ocaml
+
+**/config.h
+libs/picosat-960/makefile
+libs/quantor-3.2/Makefile
+libs/quantor-3.2/options.c
+libs/quantor-3.2/quantor
