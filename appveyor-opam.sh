@@ -2,12 +2,12 @@
 
 # default setttings
 SWITCH='4.03.0+mingw32c'
-OPAM_URL='https://github.com/fdopen/opam-repository-mingw/releases/download/0.0.0.1/opam32.tar.xz'
+OPAM_URL='https://github.com/fdopen/opam-repository-mingw/releases/download/0.0.0.2/opam32.tar.xz'
 OPAM_ARCH=opam32
 
 if [ "$PROCESSOR_ARCHITECTURE" != "AMD64" ] && \
        [ "$PROCESSOR_ARCHITEW6432" != "AMD64" ]; then
-    OPAM_URL='https://github.com/fdopen/opam-repository-mingw/releases/download/0.0.0.1/opam32.tar.xz'
+    OPAM_URL='https://github.com/fdopen/opam-repository-mingw/releases/download/0.0.0.2/opam32.tar.xz'
     OPAM_ARCH=opam32
 fi
 
@@ -27,8 +27,8 @@ curl -fsSL -o "${OPAM_ARCH}.tar.xz" "${OPAM_URL}"
 tar -xf "${OPAM_ARCH}.tar.xz"
 "${OPAM_ARCH}/install.sh"
 
-opam init -a default "https://github.com/fdopen/opam-repository-mingw.git" --comp "$SWITCH" --switch "$SWITCH"
-eval $(opam config env)
+opam init -a default "https://github.com/fdopen/opam-repository-mingw.git#opam2" -c "$SWITCH" --disable-sandboxing
+eval $(opam env)
 ocaml_system="$(ocamlc -config | awk '/^system:/ { print $2 }')"
 case "$ocaml_system" in
     *mingw64*)
@@ -45,7 +45,7 @@ esac
 
 # Now, the actual opam install, build and test
 opam install ocamlfind ounit
-eval $(opam config env)
+eval $(opam env)
 
 cd "${APPVEYOR_BUILD_FOLDER}"
 ./configure --enable-quantor --enable-tests
