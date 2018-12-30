@@ -1,0 +1,6 @@
+(jbuild_version 1)
+
+(library
+ ((name        qbf)
+  (public_name qbf))
+)
