@@ -52,6 +52,6 @@ cd "${APPVEYOR_BUILD_FOLDER}"
 make
 make test
 
-opam pin add -y .
+opam install .
 opam remove qbf
 [ -z "`ocamlfind query qbf`" ] || (echo "It uninstalled fine!" && exit 1)
