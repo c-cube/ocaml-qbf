@@ -231,14 +231,14 @@ echo " $RAWCC"
 #*------------------------------------------------------------------------*#
 echo -n "ar ..."
 case $CC in
-  i[456]86-mingw*) AR="`echo $CC|sed -e 's,gcc,ar,'`";;
+  i[456]86-mingw*|x86_64-mingw*) AR="`echo $CC|sed -e 's,gcc,ar,'`";;
   *) AR=ar;;
 esac
 echo " $AR"
 #*------------------------------------------------------------------------*#
 echo -n "ranlib ..."
 case $CC in
-  i[456]86-mingw*) RANLIB="`echo $CC|sed -e 's,gcc,ranlib,'`";;
+  i[456]86-mingw*|x86_64-mingw*) RANLIB="`echo $CC|sed -e 's,gcc,ranlib,'`";;
   *) RANLIB=ranlib;;
 esac
 echo " $RANLIB"
@@ -399,6 +399,8 @@ int main (void)
     printf ("unsigned");
   else if (sizeof(unsigned long) == sizeof(void*))
     printf ("unsigned long");
+  else if (sizeof(unsigned long long) == sizeof(void*))
+    printf ("unsigned long long");
   else
     printf ("invalid");
   return 0;
