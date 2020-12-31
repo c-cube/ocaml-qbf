@@ -72,6 +72,8 @@ echo "static ... $static"
 echo "shared ... $shared"
 
 [ "X$CC" = X ] && CC=gcc
+[ "X$AR" = X ] && AR=ar
+[ "X$RANLIB" = X ] && RANLIB=ranlib
 
 if [ X"$CFLAGS" = X ]
 then
@@ -114,6 +116,8 @@ fi
 echo "targets ... $TARGETS"
 
 echo "cc ... $CC"
+echo "ar ... $AR"
+echo "ranlib ... $RANLIB"
 
 echo "cflags ... $CFLAGS"
 
@@ -121,6 +125,8 @@ printf "makefile ..."
 rm -f makefile
 sed \
   -e "s,@CC@,$CC," \
+  -e "s,@AR@,$AR," \
+  -e "s,@RANLIB@,$RANLIB," \
   -e "s,@CFLAGS@,$CFLAGS," \
   -e "s,@TARGETS@,$TARGETS," \
 makefile.in > makefile
