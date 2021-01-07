@@ -3,16 +3,9 @@
 Library to deal with [Quantified Boolean Formulas](https://en.wikipedia.org/wiki/True_quantified_Boolean_formula)
 in OCaml.
 
-
-|        Linux, MacOS        |      Windows       |
-| :------------------------: | :----------------: |
-| [![Linux and MacOS][1]][2] | [![Windows][3]][4] |
-
-[1]: https://travis-ci.org/c-cube/ocaml-qbf.svg?branch=master
-[2]: https://travis-ci.org/c-cube/ocaml-qbf
-[3]: https://ci.appveyor.com/api/projects/status/github/c-cube/ocaml-qbf?svg=true
-[4]: https://ci.appveyor.com/project/c-cube/ocaml-qbf
-
+|                                                        Linux, MacOS, Windows                                                         |
+| :----------------------------------------------------------------------------------------------------------------------------------: |
+| [![ci](https://github.com/c-cube/ocaml-qbf/workflows/ci/badge.svg)](https://github.com/c-cube/ocaml-qbf/actions?query=workflow%3Aci) |
 
 ## Organization
 
@@ -27,7 +20,7 @@ in OCaml.
 
 ## Tested configurations
 
-It works with any version of OCaml from 3.12.1 to 4.04.0 onwards.
+It works with any version of OCaml from 4.08.x to 4.10.x onwards.
 
 1. tested on linux (Ubuntu 16.04, x86_64),
 2. tested on MacOS,
