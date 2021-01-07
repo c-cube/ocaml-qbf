@@ -9,22 +9,13 @@ dev-repo: "git+https://github.com/c-cube/ocaml-qbf.git"
 bug-reports: "https://github.com/c-cube/ocaml-qbf/issues"
 tags: [ "clib:quantor" "clib:qdpll" "clib:picosat"  ]
 build: [
-  ["ocaml" "setup.ml" "-configure" "--prefix" prefix]
-  ["ocaml" "setup.ml" "-build"]
-  ["ocaml" "setup.ml" "-configure" "--enable-tests"] {with-test}
-  ["ocaml" "setup.ml" "-build"] {with-test}
-  ["ocaml" "setup.ml" "-test"] {with-test}
-  ["ocaml" "setup.ml" "-doc"] {with-doc}
-]
-install: ["ocaml" "setup.ml" "-install"]
-remove: [
-  ["ocamlfind" "remove" "qbf"]
+  ["dune" "build" "-p" name "-j" jobs]
+  ["dune" "build" "@doc" "-p" name ] {with-doc}
+  ["dune" "runtest" "-p" name "-j" jobs] {with-test & ocaml:version < "4.11"}
 ]
 depends: [
   "ocaml"
-  "ocamlbuild" {build}
-  "ocamlfind" {build}
-  "ounit" {with-test}
+  "dune" { >= "2.0" }
 ]
 depopts: [
   "ctypes"
@@ -39,4 +30,3 @@ simplifications and reduction to CNF.
 It packs:
 - a binding to quantor, which is shipped with the library
 - a binding to Depqbf"""
-flags: light-uninstall
