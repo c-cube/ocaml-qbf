@@ -24,13 +24,10 @@ It works with any version of OCaml from 4.08.x to 4.10.x onwards.
 
 1. tested on linux (Ubuntu 16.04, x86_64),
 2. tested on MacOS,
-3. on windows, the cross-compilation to native win32 under cygwin works fine
-   using the mingw64-i686 cross-compiler. It does not work with the x86_64
-   compiler[^1]. Should also work under windows-bash for windows 10.
-
-[^1]: This is a bug in quantor's `./configure`. When testing the size of a
-      word, windows uses `unsigned long long` but this option is not
-      checked (only `unsigned long` and `unsigned`).
+3. tested on Windows using Cygwin32 and Cygwin64 by cross-compilating to
+   native win32 under using the `mingw64-i686` (respectively `mingw64-x86_64`)
+   cross-compiler.
+4. Should also work under WSL and WSL2 on Windows 10.
 
 ## License
 
@@ -63,5 +60,6 @@ From source:
 
 - moved to [dune](https://github.com/ocaml/dune) which has become the
   de-facto OCaml build tool.
+- fix the `x86_64` build on Windows + Cygwin64 + the mingw64 toolchain.
 - fix building ocaml-qbf using opam 2. Opam 2 is sandboxing builds and
   do not accept messing with /tmp
