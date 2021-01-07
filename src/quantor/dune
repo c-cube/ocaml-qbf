@@ -21,3 +21,7 @@
  (action
   (bash
     "\n  %{make} -s -C ../../libs clean\n  %{make} -s -C ../../libs picosat-960/libpicosat.a\n  %{make} -s -C ../../libs quantor-3.2/libquantor.a\n  cp ../../libs/quantor-3.2/libquantor.a .\n  cp ../../libs/picosat-960/libpicosat.a .\n  cp ../../libs/quantor-3.2/quantor.h .\n  cp ../../libs/picosat-960/picosat.h .\n  %{make} -s -C ../../libs clean\n")))
+
+(install
+ (section lib)
+ (files picosat.h quantor.h libpicosat.a libquantor.a))
