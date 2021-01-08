@@ -33,8 +33,9 @@ jobs:
         with:
           ocaml-version: ${{ matrix.ocaml-version }}
       - run: opam install -y . --deps-only --with-test --with-doc
-      - run: opam exec -- dune build @install -p qbf
-      - run: opam exec -- dune runtest -p qbf
+      - run: opam exec -- dune build
+      - run: opam exec -- dune runtest
+      - run: opam install .
       - run: opam pin add -y .#HEAD
       - run: opam remove qbf
       - name: Check that it uninstalled correctly
