@@ -1,4 +1,3 @@
-
 (*
 copyright (c) 2013-2014, simon cruanes
 all rights reserved.
@@ -49,6 +48,7 @@ external quantor_deref : quantor -> int -> int = "quantor_stub_deref"
 
 module Raw = struct
   type t = Quantor of quantor
+
   (* Put it in a block, so that it can be GC'd and so we can attach a
       finalizer to it. The finalizer will be responsible for free'ing
       the actual solver. *)
@@ -60,32 +60,34 @@ module Raw = struct
     q
 
   let deref (Quantor q) (i : lit) =
-    match quantor_deref q (i:>int) with
+    match quantor_deref q (i :> int) with
     | 0 -> Qbf.False
     | 1 -> Qbf.True
     | -1 -> Qbf.Undef
     | n -> failwith ("unknown quantor_deref result: " ^ string_of_int n)
 
-  let sat ((Quantor q) as solver) =
+  let sat (Quantor q as solver) =
     let i = quantor_sat q in
     match i with
-      | 0 -> Qbf.Unknown
-      | 10 -> Qbf.Sat (fun i -> deref solver (Qbf.Lit.abs i))
-      | 20 -> Qbf.Unsat
-      | 30 -> Qbf.Timeout
-      | 40 -> Qbf.Spaceout
-      | _ -> failwith ("unknown quantor result: " ^string_of_int i)
+    | 0 -> Qbf.Unknown
+    | 10 -> Qbf.Sat (fun i -> deref solver (Qbf.Lit.abs i))
+    | 20 -> Qbf.Unsat
+    | 30 -> Qbf.Timeout
+    | 40 -> Qbf.Spaceout
+    | _ -> failwith ("unknown quantor result: " ^ string_of_int i)
 
-  let scope (Quantor q) quant = match quant with
+  let scope (Quantor q) quant =
+    match quant with
     | Qbf.Forall -> quantor_scope_forall q
     | Qbf.Exists -> quantor_scope_exists q
 
   let add_unsafe (Quantor q) i = quantor_add q i
 
-  let add (Quantor q) i = quantor_add q (i:lit:>int)
+  let add (Quantor q) i = quantor_add q (i : lit :> int)
 end
 
-let rec _add_cnf solver cnf = match cnf with
+let rec _add_cnf solver cnf =
+  match cnf with
   | Qbf.QCNF.Quant (quant, lits, cnf') ->
       Raw.scope solver quant;
       List.iter (fun lit -> Raw.add solver lit) lits;
@@ -95,12 +97,12 @@ let rec _add_cnf solver cnf = match cnf with
       List.iter
         (fun c ->
           List.iter (fun lit -> Raw.add solver lit) c;
-          Raw.add_unsafe solver 0;
-        ) clauses
+          Raw.add_unsafe solver 0)
+        clauses
 
 let solve cnf =
   let quantor = Raw.create () in
   _add_cnf quantor cnf;
   Raw.sat quantor
 
-let solver = {Qbf.solve=solve; Qbf.name="quantor";}
+let solver = { Qbf.solve; Qbf.name = "quantor" }

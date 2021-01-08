@@ -1,4 +1,3 @@
-
 module D = Depqbf
 
 let mk = Qbf.Lit.make
@@ -19,9 +18,9 @@ let test_depqbf2 _ =
   D.add0 s;
   D.add_var_to_scope s (mk 3) level1;
   D.gc s;
-  add_clause s [1;2;3];
-  add_clause s [1;-2;3];
-  add_clause s [-3];
+  add_clause s [ 1; 2; 3 ];
+  add_clause s [ 1; -2; 3 ];
+  add_clause s [ -3 ];
   let res = D.check s in
   Format.eprintf "(res: %a)@?" Qbf.pp_result res;
   ()

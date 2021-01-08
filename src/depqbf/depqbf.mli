@@ -1,4 +1,3 @@
-
 (*
 copyright (c) 2013-2014, simon cruanes
 all rights reserved.
@@ -27,8 +26,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (** {1 Bindings to DEPQBF} *)
 
 type nesting = int
+
 type var_id = Qbf.Lit.t (* unsigned *)
-type lit_id = Qbf.Lit.t  (* signed *)
+
+type lit_id = Qbf.Lit.t (* signed *)
+
 type constraint_id = int
 
 type t
@@ -81,5 +83,3 @@ val assume : t -> lit_id -> unit
 
 val get_relevant_assumptions : t -> lit_id list
 (** List of assumptions used to prove last UNSAT *)
-
-

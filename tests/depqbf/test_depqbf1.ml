@@ -1,4 +1,3 @@
-
 module D = Depqbf
 
 let mk = Qbf.Lit.make
