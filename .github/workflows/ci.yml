@@ -35,8 +35,7 @@ jobs:
       - run: opam install -y . --deps-only --with-test --with-doc
       - run: opam exec -- dune build
       - run: opam exec -- dune runtest
-      - run: opam install .
-      - run: opam pin add -y .#HEAD
+      - run: opam install -y . --with-test --with-doc
       - run: opam remove qbf
       - name: Check that it uninstalled correctly
         run: test -z "$(opam exec -- ocamlfind query qbf)"
