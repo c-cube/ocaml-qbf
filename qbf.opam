@@ -17,6 +17,7 @@ depends: [
   "ocaml"
   "dune" { >= "2.0" }
   "ounit" {with-test}
+  "odoc" {with-doc}
 ]
 depopts: [
   "ctypes"
