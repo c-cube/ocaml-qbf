@@ -9,7 +9,7 @@ let test_quantor_false _ =
     let a,b,c = (Lit.make 1, Lit.make 2, Lit.make 3) in
     let formula = and_l [atom a; atom b; atom c] in
     let qcnf = QFormula.cnf (forall [a; b; c] (prop formula)) in
-    let _ = solve Quantor.solver qcnf
+    let _ = solve ~solver:Quantor.solver qcnf
     in ()
 
 (* Maël: I added this test after discovering a bug I had introduced when
@@ -18,7 +18,7 @@ let test_quantor_true _ =
     let a,b,c = (Lit.make 1, Lit.make 2, Lit.make 3) in
     let formula = or_l [atom a; atom b; atom c] in
     let qcnf = QFormula.cnf (exists [a; b; c] (prop formula)) in
-    let _ = solve Quantor.solver qcnf
+    let _ = solve ~solver:Quantor.solver qcnf
     in ()
 
 

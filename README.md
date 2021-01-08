@@ -52,9 +52,8 @@ Using opam:
 
 From source:
 
-    ./configure
-    make
-    make install
+    opam install . --working-dir --deps-only
+    dune build
 
 ## Known issues
 
@@ -67,7 +66,9 @@ From source:
 
 ## Changelog
 
-### 0.3 (2018-12-28)
+### 0.3 (unreleased)
 
+- moved to [dune](https://github.com/ocaml/dune) which has become the
+  de-facto OCaml build tool.
 - fix building ocaml-qbf using opam 2. Opam 2 is sandboxing builds and
   do not accept messing with /tmp
