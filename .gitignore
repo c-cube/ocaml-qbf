@@ -40,3 +40,4 @@ libs/quantor-3.2/options.c
 libs/quantor-3.2/quantor
 
 .merlin
+qbf.install
