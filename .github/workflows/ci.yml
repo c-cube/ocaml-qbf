@@ -24,9 +24,9 @@ jobs:
           - image: ubuntu-latest
             ocaml-version: "4.10.x"
           - image: windows-latest
-            ocaml-version: "4.08.1"
+            ocaml-version: "4.08.x"
           - image: macos-latest
-            ocaml-version: "4.08.1"
+            ocaml-version: "4.08.x"
     steps:
       - uses: actions/checkout@v2
       - uses: actions-ml/setup-ocaml@master

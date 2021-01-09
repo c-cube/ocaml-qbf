@@ -20,7 +20,7 @@
   (source_tree ../../libs))
  (action
   (bash
-    "\n  %{make} -s -C ../../libs picosat-960/libpicosat.a\n  %{make} -s -C ../../libs quantor-3.2/libquantor.a\n  cp ../../libs/quantor-3.2/libquantor.a .\n  cp ../../libs/picosat-960/libpicosat.a .\n  cp ../../libs/quantor-3.2/quantor.h .\n  cp ../../libs/picosat-960/picosat.h .")))
+    "cd ../../libs && '%{make}' picosat-960/libpicosat.a quantor-3.2/libquantor.a && cp quantor-3.2/libquantor.a quantor-3.2/quantor.h picosat-960/libpicosat.a picosat-960/picosat.h ../src/quantor")))
 
 (install
  (section lib)
