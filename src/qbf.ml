@@ -72,7 +72,7 @@ module Lit = struct
       !r
 
   let equal (i:int) j = i=j
-  let compare (i:int) j = Pervasives.compare i j
+  let compare (i:int) j = Stdlib.compare i j
   let hash_fun i h = Int64.of_int (Hashtbl.hash (i,h))
   let hash i = i land max_int
   let print fmt i =
@@ -103,7 +103,7 @@ module CNF = struct
   type t = clause list
 
   let equal = (=)
-  let compare = Pervasives.compare
+  let compare = Stdlib.compare
   let hash = Hashtbl.hash
 
   let _print_clause ~pp_lit fmt c = match c with
@@ -135,7 +135,7 @@ module QCNF = struct
   let prop c = Prop c
 
   let equal = (=)
-  let compare = Pervasives.compare
+  let compare = Stdlib.compare
   let hash = Hashtbl.hash
 
   let print_with ~pp_lit fmt f =
@@ -219,7 +219,7 @@ module Formula = struct
   let or_map ~f seq = or_l (map_list_ f seq)
 
   let equal = (=)
-  let compare = Pervasives.compare
+  let compare = Stdlib.compare
   let hash = Hashtbl.hash
 
   let print_with ~pp_lit fmt f =
@@ -409,7 +409,7 @@ module QFormula = struct
     | Prop of Formula.t
 
   let equal = (=)
-  let compare = Pervasives.compare
+  let compare = Stdlib.compare
   let hash = Hashtbl.hash
 
   let quantify q lits f = match lits, f with

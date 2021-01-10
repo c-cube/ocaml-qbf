@@ -8,24 +8,17 @@
  (wrapped false)
  (libraries qbf)
  (flags :standard -warn-error -a+8)
- (c_library_flags :standard -lquantor -lpicosat -Lsrc/quantor)
+ (c_library_flags :standard -lquantor -lpicosat -L.)
  (library_flags
   (-cclib -L.)
   (-cclib -lquantor)
   (-cclib -lpicosat)))
 
 (rule
- (targets picosat.h quantor.h libpicosat.a libquantor.a)
- (deps
-  (source_tree ../../libs))
+ (targets picosat.h libpicosat.a quantor.h libquantor.a)
  (action
-  (bash
-    "\n  %{make} -s -C ../../libs picosat-960/libpicosat.a\n  %{make} -s -C ../../libs quantor-3.2/libquantor.a\n  cp ../../libs/quantor-3.2/libquantor.a .\n  cp ../../libs/picosat-960/libpicosat.a .\n  cp ../../libs/quantor-3.2/quantor.h .\n  cp ../../libs/picosat-960/picosat.h .")))
-
-(install
- (section lib)
- (files
-  (picosat.h as quantor/picosat.h)
-  (quantor.h as quantor/quantor.h)
-  (libpicosat.a as quantor/libpicosat.a)
-  (libquantor.a as quantor/libquantor.a)))
+  (progn
+   (copy %{workspace_root}/libpicosat.a libpicosat.a)
+   (copy %{workspace_root}/picosat.h picosat.h)
+   (copy %{workspace_root}/libquantor.a libquantor.a)
+   (copy %{workspace_root}/quantor.h quantor.h))))

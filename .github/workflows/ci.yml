@@ -1,0 +1,44 @@
+name: ci
+
+on:
+  push:
+    branches: [master]
+    tags:
+      - "v*" # Push events to matching v*, i.e. v1.0, v20.15.10
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.image }}
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      matrix:
+        include:
+          - image: ubuntu-latest
+            ocaml-version: "4.08.x"
+          - image: ubuntu-latest
+            ocaml-version: "4.09.x"
+          - image: ubuntu-latest
+            ocaml-version: "4.10.x"
+          - image: windows-latest
+            ocaml-version: "4.08.x"
+          - image: macos-latest
+            ocaml-version: "4.08.x"
+    steps:
+      # Cygwin on Windows does not take care of CRLF ending conversion
+      # (unlike MSYS2).
+      - run: git config --global core.autocrlf false && git config --global core.eol lf
+      - uses: actions/checkout@v2
+      - uses: actions-ml/setup-ocaml@master
+        with:
+          ocaml-version: ${{ matrix.ocaml-version }}
+      - run: opam install -y . --deps-only --with-test --with-doc
+      - run: opam exec -- dune build
+      - run: opam exec -- dune runtest
+      - run: opam install -y . --with-test --with-doc
+      - run: opam remove qbf
+      - name: Check that it uninstalled correctly
+        run: test -z "$(opam exec -- ocamlfind query qbf)"
