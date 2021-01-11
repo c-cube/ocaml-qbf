@@ -19,6 +19,10 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
 - `depqbf` support has been temporarily removed due to the move to Dune. A
   PR to re-introduce `depqbf` in Dune would be welcome!
 
+### Changed
+
+- OCaml 4.08.x is now the minimum version required to run this library.
+
 ### Fixed
 
 - Fixed the `x86_64` build on Windows + Cygwin64 + the mingw64 toolchain.

@@ -14,7 +14,7 @@ build: [
   ["dune" "runtest" "-p" name "-j" jobs] {with-test & ocaml:version < "4.11"}
 ]
 depends: [
-  "ocaml"
+  "ocaml" {>= "4.08"}
   "dune" { >= "2.0" }
   "ounit" {with-test}
   "odoc" {with-doc}
