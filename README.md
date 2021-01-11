@@ -56,7 +56,7 @@ From source:
 
 ## Changelog
 
-### 0.3 (unreleased)
+### 0.3 (2021-01-11)
 
 - moved to [dune](https://github.com/ocaml/dune) which has become the
   de-facto OCaml build tool.
