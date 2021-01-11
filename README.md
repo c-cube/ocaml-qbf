@@ -53,13 +53,3 @@ From source:
 * `process killed by signal -10` is still unknown. It was happening in
   travis-ci. My workaround was to remove the travis-ci cache (~/.opam was
   cached between two builds).
-
-## Changelog
-
-### 0.3 (2021-01-11)
-
-- moved to [dune](https://github.com/ocaml/dune) which has become the
-  de-facto OCaml build tool.
-- fix the `x86_64` build on Windows + Cygwin64 + the mingw64 toolchain.
-- fix building ocaml-qbf using opam 2. Opam 2 is sandboxing builds and
-  do not accept messing with /tmp
