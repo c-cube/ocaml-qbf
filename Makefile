@@ -1,18 +1,17 @@
 build:
-	dune build
+	@dune build
 
 test:
-	dune runtest
-
+	@dune runtest --force
 
 fmt:
-	dune build @fmt
+	@dune build @fmt
 
 install:
-	dune build @install
-	dune install
+	@dune build @install
+	@dune install
 
-uninstall: setup.data
-	dune uninstall
+uninstall:
+	@dune uninstall
 
 .PHONY: build test install uninstall clean
