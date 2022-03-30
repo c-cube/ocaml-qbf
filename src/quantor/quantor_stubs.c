@@ -32,14 +32,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 CAMLprim value quantor_stub_create(value unit)
 {
-  CAMLparam0();
+  CAMLparam1(unit);
   Quantor* q = quantor_new();
   CAMLreturn ((value) q);
 }
 
 CAMLprim value quantor_stub_delete(value raw)
 {
-  CAMLparam0();
+  CAMLparam1(raw);
   Quantor* q = (Quantor*) raw;
   quantor_delete(q);
   CAMLreturn (Val_unit);
@@ -56,7 +56,7 @@ CAMLprim value quantor_stub_sat(value raw)
 
 CAMLprim value quantor_stub_exists(value raw)
 {
-  CAMLparam0();
+  CAMLparam1(raw);
   Quantor* q = (Quantor*) raw;
 
   const char *err = quantor_scope(q, QUANTOR_EXISTENTIAL_VARIABLE_TYPE);
@@ -71,7 +71,7 @@ CAMLprim value quantor_stub_exists(value raw)
 
 CAMLprim value quantor_stub_forall(value raw)
 {
-  CAMLparam0();
+  CAMLparam1(raw);
   Quantor* q = (Quantor*) raw;
 
   const char *err = quantor_scope(q, QUANTOR_UNIVERSAL_VARIABLE_TYPE);
@@ -86,7 +86,7 @@ CAMLprim value quantor_stub_forall(value raw)
 
 CAMLprim value quantor_stub_add(value raw, value i)
 {
-  CAMLparam0();
+  CAMLparam2(raw, i);
   Quantor* q = (Quantor*) raw;
   int j = Int_val(i);
   const char* err = quantor_add(q, j);
@@ -101,7 +101,7 @@ CAMLprim value quantor_stub_add(value raw, value i)
 
 CAMLprim value quantor_stub_deref(value raw, value i)
 {
-  CAMLparam0();
+  CAMLparam2(raw, i);
   Quantor* q = (Quantor*) raw;
   int j = Int_val(i);
 

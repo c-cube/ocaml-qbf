@@ -4,6 +4,9 @@ build:
 test:
 	@dune runtest --force
 
+clean:
+	@dune clean
+
 fmt:
 	@dune build @fmt
 
