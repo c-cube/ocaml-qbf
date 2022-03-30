@@ -8,5 +8,11 @@
 
 (executable
  (name test_quantor)
- (libraries qbf qbf.quantor oUnit)
+ (modules test_quantor)
+ (libraries qbf qbf.quantor ounit2)
  (modes byte))
+
+(test
+  (libraries qbf qbf.quantor)
+  (modules reg_13)
+  (name reg_13))
