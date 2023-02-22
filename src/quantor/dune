@@ -8,11 +8,21 @@
  (wrapped false)
  (libraries qbf)
  (flags :standard -warn-error -a+8)
- (c_library_flags :standard -lquantor -lpicosat -L.)
+ (c_library_flags :standard -lquantor -lpicosat -L%{read:cwd.txt})
  (library_flags
-  (-cclib -L.)
+  (-cclib -L%{read:cwd.txt})
   (-cclib -lquantor)
   (-cclib -lpicosat)))
+
+; This stores the absolute path to the working directory in a file cwd.txt so
+; that the linker can be passed the path to this directory and find the
+; -lquantor and -lpicosat libraries. This hack is necessary at the moment as the
+; linker is invoked from the workspace root so passing -L. or -L%{project_root}
+; won't work.
+; https://github.com/ocaml/dune/issues/7146
+(rule
+ (target cwd.txt)
+ (action (with-stdout-to cwd.txt (run pwd))))
 
 (rule
  (targets picosat.h libpicosat.a quantor.h libquantor.a)
